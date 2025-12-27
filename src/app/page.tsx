@@ -48,29 +48,35 @@ export default function CelticCrossPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [selectedHistory, setSelectedHistory] = useState<any>(null);
 
-  useEffect(() => {
+useEffect(() => {
     if (!supabase) return;
 
-    // 【強化ポイント】
-    // 1. URLにセッションが含まれている場合（OAuth戻りなど）を即座に処理
-    // 2. その後 getSession で既存のCookieを確認
-    const checkUser = async () => {
+    const initAuth = async () => {
+      // 1. まずは現在のURLのハッシュ（#access_tokenなど）や既存のセッションをチェック
       const { data: { session }, error } = await supabase.auth.getSession();
-      if (session) {
-        setUser(session.user);
-        fetchHistory(session.user.id);
-      }
-    };
-
-    checkUser();
-
-    // ログイン・ログアウトの変化をリアルタイムで監視
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth Event:", event); // デバッグ用：何が起きているかコンソールで見れます
+      
       if (session) {
         setUser(session.user);
         fetchHistory(session.user.id);
       } else {
+        // 2. セッションがない場合、念のため getUser でCookieから直接ユーザー取得を試みる
+        const { data: { user: cookieUser } } = await supabase.auth.getUser();
+        if (cookieUser) {
+          setUser(cookieUser);
+          fetchHistory(cookieUser.id);
+        }
+      }
+    };
+
+    initAuth();
+
+    // 3. ログイン状態の変化（ログイン/ログアウト）をリアルタイムで監視
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth Event:", event); // 動作確認用
+      if (session) {
+        setUser(session.user);
+        fetchHistory(session.user.id);
+      } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setHistory([]);
       }
@@ -79,6 +85,7 @@ export default function CelticCrossPage() {
     return () => subscription.unsubscribe();
   }, []);
 
+  
   const fetchHistory = async (userId: string) => {
     if (!supabase) return;
     const { data, error } = await supabase.from('tarot_history').select('*').eq('user_id', userId).order('created_at', { ascending: false });
