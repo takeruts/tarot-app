@@ -13,13 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    storageKey: 'sb-auth-token', // 共通のキーを使用
-    cookieOptions: {
-      domain: '.tarotai.jp', // 親ドメインで共有（先頭のドットが重要）
-      path: '/',
-      sameSite: 'lax',
-      secure: true,
-    }
+    storageKey: 'sb-auth-token', // これをカチピ側と絶対に合わせる
   }
 }) : null;
 
