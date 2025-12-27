@@ -1,0 +1,782 @@
+[
+  {
+    "id": "major_00",
+    "name": "愚者",
+    "english_name": "The Fool",
+    "image_url": "/images/tarot/00.jpg",
+    "meaning": {
+      "upright": "自由、冒険、可能性、無垢",
+      "reversed": "無計画、無責任、わがまま"
+    }
+  },
+  {
+    "id": "major_01",
+    "name": "魔術師",
+    "english_name": "The Magician",
+    "image_url": "/images/tarot/01.jpg",
+    "meaning": {
+      "upright": "創造、才能、自信、スタート",
+      "reversed": "混迷、消極的、スランプ"
+    }
+  },
+  {
+    "id": "major_02",
+    "name": "女教皇",
+    "english_name": "The High Priestess",
+    "image_url": "/images/tarot/02.jpg",
+    "meaning": {
+      "upright": "直感、知性、神秘、静寂",
+      "reversed": "わがまま、神経質、批判的"
+    }
+  },
+  {
+    "id": "major_03",
+    "name": "女帝",
+    "english_name": "The Empress",
+    "image_url": "/images/tarot/03.jpg",
+    "meaning": {
+      "upright": "豊穣、母性、情熱、繁栄",
+      "reversed": "挫折、虚栄心、感情的"
+    }
+  },
+  {
+    "id": "major_04",
+    "name": "皇帝",
+    "english_name": "The Emperor",
+    "image_url": "/images/tarot/04.jpg",
+    "meaning": {
+      "upright": "権威、支配、責任、安定",
+      "reversed": "独断的、無責任、傲慢"
+    }
+  },
+  {
+    "id": "major_05",
+    "name": "教皇",
+    "english_name": "The Hierophant",
+    "image_url": "/images/tarot/05.jpg",
+    "meaning": {
+      "upright": "慈悲、連帯、信頼、伝統",
+      "reversed": "不信感、お節介、保守的"
+    }
+  },
+  {
+    "id": "major_06",
+    "name": "恋人",
+    "english_name": "The Lovers",
+    "image_url": "/images/tarot/06.jpg",
+    "meaning": {
+      "upright": "選択、調和、情熱、結合",
+      "reversed": "不和、優柔不断、空回り"
+    }
+  },
+  {
+    "id": "major_07",
+    "name": "戦車",
+    "english_name": "The Chariot",
+    "image_url": "/images/tarot/07.jpg",
+    "meaning": {
+      "upright": "勝利、前進、自制心、行動力",
+      "reversed": "暴走、挫折、独りよがり"
+    }
+  },
+  {
+    "id": "major_08",
+    "name": "力",
+    "english_name": "Strength",
+    "image_url": "/images/tarot/08.jpg",
+    "meaning": {
+      "upright": "勇気、忍耐、信念、自制",
+      "reversed": "弱気、自己不信、感情の爆発"
+    }
+  },
+  {
+    "id": "major_09",
+    "name": "隠者",
+    "english_name": "The Hermit",
+    "image_url": "/images/tarot/09.jpg",
+    "meaning": {
+      "upright": "探求、内省、孤独、助言",
+      "reversed": "閉鎖的、偏屈、慎重さを欠く"
+    }
+  },
+  {
+    "id": "major_10",
+    "name": "運命の輪",
+    "english_name": "Wheel of Fortune",
+    "image_url": "/images/tarot/10.jpg",
+    "meaning": {
+      "upright": "転換点、幸運、チャンス、変化",
+      "reversed": "暗転、不運、急激な変化"
+    }
+  },
+  {
+    "id": "major_11",
+    "name": "正義",
+    "english_name": "Justice",
+    "image_url": "/images/tarot/11.jpg",
+    "meaning": {
+      "upright": "公正、判断、均衡、誠実",
+      "reversed": "不公平、偏見、優柔不断"
+    }
+  },
+  {
+    "id": "major_12",
+    "name": "吊るされた男",
+    "english_name": "The Hanged Man",
+    "image_url": "/images/tarot/12.jpg",
+    "meaning": {
+      "upright": "忍耐、奉仕、視点の転換、試練",
+      "reversed": "徒労、自己犠牲、執着"
+    }
+  },
+  {
+    "id": "major_13",
+    "name": "死神",
+    "english_name": "Death",
+    "image_url": "/images/tarot/13.jpg",
+    "meaning": {
+      "upright": "終焉、再生、再出発、変化",
+      "reversed": "停滞、未練、再生の遅れ"
+    }
+  },
+  {
+    "id": "major_14",
+    "name": "節制",
+    "english_name": "Temperance",
+    "image_url": "/images/tarot/14.jpg",
+    "meaning": {
+      "upright": "調和、自制、献身、純化",
+      "reversed": "不摂生、不調和、感情的"
+    }
+  },
+  {
+    "id": "major_15",
+    "name": "悪魔",
+    "english_name": "The Devil",
+    "image_url": "/images/tarot/15.jpg",
+    "meaning": {
+      "upright": "束縛、誘惑、執着、欲望",
+      "reversed": "解放、断ち切り、再出発"
+    }
+  },
+  {
+    "id": "major_16",
+    "name": "塔",
+    "english_name": "The Tower",
+    "image_url": "/images/tarot/16.jpg",
+    "meaning": {
+      "upright": "崩壊、災難、衝撃、急変",
+      "reversed": "緊迫、不名誉、再生の兆し"
+    }
+  },
+  {
+    "id": "major_17",
+    "name": "星",
+    "english_name": "The Star",
+    "image_url": "/images/tarot/17.jpg",
+    "meaning": {
+      "upright": "希望、憧れ、直感、浄化",
+      "reversed": "失望、無気力、高望み"
+    }
+  },
+  {
+    "id": "major_18",
+    "name": "月",
+    "english_name": "The Moon",
+    "image_url": "/images/tarot/18.jpg",
+    "meaning": {
+      "upright": "不安、迷い、曖昧、隠れた敵",
+      "reversed": "解消、好転、現実が見える"
+    }
+  },
+  {
+    "id": "major_19",
+    "name": "太陽",
+    "english_name": "The Sun",
+    "image_url": "/images/tarot/19.jpg",
+    "meaning": {
+      "upright": "成功、祝福、活力、明るい未来",
+      "reversed": "不調、停滞、延期"
+    }
+  },
+  {
+    "id": "major_20",
+    "name": "審判",
+    "english_name": "Judgement",
+    "image_url": "/images/tarot/20.jpg",
+    "meaning": {
+      "upright": "復活、覚醒、結果、再会",
+      "reversed": "再起不能、未練、悔恨"
+    }
+  },
+  {
+    "id": "major_21",
+    "name": "世界",
+    "english_name": "The World",
+    "image_url": "/images/tarot/21.jpg",
+    "meaning": {
+      "upright": "完成、達成、完璧、統合",
+      "reversed": "未完成、中途半端、スランプ"
+    }
+  },
+  {
+    "id": "cups_01",
+    "name": "カップのエース",
+    "english_name": "Ace of Cups",
+    "image_url": "/images/tarot/22.jpg",
+    "meaning": {
+      "upright": "愛の始まり、純粋な感情、直感",
+      "reversed": "感情の不安定、失恋、空虚"
+    }
+  },
+  {
+    "id": "cups_02",
+    "name": "カップの2",
+    "english_name": "Two of Cups",
+    "image_url": "/images/tarot/23.jpg",
+    "meaning": {
+      "upright": "結合、パートナーシップ、調和",
+      "reversed": "不和、別れ、信頼の欠如"
+    }
+  },
+  {
+    "id": "cups_03",
+    "name": "カップの3",
+    "english_name": "Three of Cups",
+    "image_url": "/images/tarot/24.jpg",
+    "meaning": {
+      "upright": "祝福、友情、コミュニティの喜び",
+      "reversed": "過度な享楽、孤立、不誠実な交友"
+    }
+  },
+  {
+    "id": "cups_04",
+    "name": "カップの4",
+    "english_name": "Four of Cups",
+    "image_url": "/images/tarot/25.jpg",
+    "meaning": {
+      "upright": "不満、内省、再評価",
+      "reversed": "新しい興味、活動の再開、受容"
+    }
+  },
+  {
+    "id": "cups_05",
+    "name": "カップの5",
+    "english_name": "Five of Cups",
+    "image_url": "/images/tarot/26.jpg",
+    "meaning": {
+      "upright": "喪失、後悔、悲しみ",
+      "reversed": "希望の兆し、受容、再出発"
+    }
+  },
+  {
+    "id": "cups_06",
+    "name": "カップの6",
+    "english_name": "Six of Cups",
+    "image_url": "/images/tarot/27.jpg",
+    "meaning": {
+      "upright": "郷愁、純真、過去の再会",
+      "reversed": "過去への執着、自立、未来への不安"
+    }
+  },
+  {
+    "id": "cups_07",
+    "name": "カップの7",
+    "english_name": "Seven of Cups",
+    "image_url": "/images/tarot/28.jpg",
+    "meaning": {
+      "upright": "選択肢、幻想、夢想",
+      "reversed": "現実への目覚め、決断、具体的な計画"
+    }
+  },
+  {
+    "id": "cups_08",
+    "name": "カップの8",
+    "english_name": "Eight of Cups",
+    "image_url": "/images/tarot/29.jpg",
+    "meaning": {
+      "upright": "放棄、離別、精神的探求",
+      "reversed": "未練、とどまる決意、変化への恐れ"
+    }
+  },
+  {
+    "id": "cups_09",
+    "name": "カップの9",
+    "english_name": "Nine of Cups",
+    "image_url": "/images/tarot/30.jpg",
+    "meaning": {
+      "upright": "満足、願いの成就、幸福",
+      "reversed": "過信、自己満足、物質的な不満"
+    }
+  },
+  {
+    "id": "cups_10",
+    "name": "カップの10",
+    "english_name": "Ten of Cups",
+    "image_url": "/images/tarot/31.jpg",
+    "meaning": {
+      "upright": "幸福な家庭、平和、心の充足",
+      "reversed": "家庭内不和、期待外れ、価値観の相違"
+    }
+  },
+  {
+    "id": "cups_11",
+    "name": "カップのペイジ",
+    "english_name": "Page of Cups",
+    "image_url": "/images/tarot/32.jpg",
+    "meaning": {
+      "upright": "感受性、インスピレーション、吉報",
+      "reversed": "傷つきやすさ、不安定な感情、幼稚さ"
+    }
+  },
+  {
+    "id": "cups_12",
+    "name": "カップのナイト",
+    "english_name": "Knight of Cups",
+    "image_url": "/images/tarot/33.jpg",
+    "meaning": {
+      "upright": "ロマン、提案、愛の追求",
+      "reversed": "移り気、偽り、期待外れの知らせ"
+    }
+  },
+  {
+    "id": "cups_13",
+    "name": "カップのクイーン",
+    "english_name": "Queen of Cups",
+    "image_url": "/images/tarot/34.jpg",
+    "meaning": {
+      "upright": "深い愛情、共感、直感",
+      "reversed": "過剰な依存、情緒不安定、独りよがり"
+    }
+  },
+  {
+    "id": "cups_14",
+    "name": "カップのキング",
+    "english_name": "King of Cups",
+    "image_url": "/images/tarot/35.jpg",
+    "meaning": {
+      "upright": "寛大、穏やか、賢明な助言者",
+      "reversed": "冷淡、感情の悪用、不誠実"
+    }
+  },
+  {
+    "id": "pentacles_01",
+    "name": "ペンタクルのエース",
+    "english_name": "Ace of Pentacles",
+    "image_url": "/images/tarot/36.jpg",
+    "meaning": {
+      "upright": "繁栄、新しい仕事、物質的な成功",
+      "reversed": "金銭トラブル、チャンスの喪失、強欲"
+    }
+  },
+  {
+    "id": "pentacles_02",
+    "name": "ペンタクルの2",
+    "english_name": "Two of Pentacles",
+    "image_url": "/images/tarot/37.jpg",
+    "meaning": {
+      "upright": "柔軟性、バランス、適応力",
+      "reversed": "不均衡、混乱、不注意"
+    }
+  },
+  {
+    "id": "pentacles_03",
+    "name": "ペンタクルの3",
+    "english_name": "Three of Pentacles",
+    "image_url": "/images/tarot/38.jpg",
+    "meaning": {
+      "upright": "チームワーク、熟練、協力",
+      "reversed": "技術不足、不和、手抜き"
+    }
+  },
+  {
+    "id": "pentacles_04",
+    "name": "ペンタクルの4",
+    "english_name": "Four of Pentacles",
+    "image_url": "/images/tarot/39.jpg",
+    "meaning": {
+      "upright": "所有、安定、保守的",
+      "reversed": "執着、浪費、損失"
+    }
+  },
+  {
+    "id": "pentacles_05",
+    "name": "ペンタクルの5",
+    "english_name": "Five of Pentacles",
+    "image_url": "/images/tarot/40.jpg",
+    "meaning": {
+      "upright": "困窮、疎外、逆境",
+      "reversed": "回復の兆し、状況の改善、支援"
+    }
+  },
+  {
+    "id": "pentacles_06",
+    "name": "ペンタクルの6",
+    "english_name": "Six of Pentacles",
+    "image_url": "/images/tarot/41.jpg",
+    "meaning": {
+      "upright": "寛大、慈善、公平な分配",
+      "reversed": "不平等、借金、利己的"
+    }
+  },
+  {
+    "id": "pentacles_07",
+    "name": "ペンタクルの7",
+    "english_name": "Seven of Pentacles",
+    "image_url": "/images/tarot/42.jpg",
+    "meaning": {
+      "upright": "収穫の待機、評価、忍耐",
+      "reversed": "徒労、焦り、投資の失敗"
+    }
+  },
+  {
+    "id": "pentacles_08",
+    "name": "ペンタクルの8",
+    "english_name": "Eight of Pentacles",
+    "image_url": "/images/tarot/43.jpg",
+    "meaning": {
+      "upright": "勤勉、修行、完璧主義",
+      "reversed": "怠慢、単調、虚栄心"
+    }
+  },
+  {
+    "id": "pentacles_09",
+    "name": "ペンタクルの9",
+    "english_name": "Nine of Pentacles",
+    "image_url": "/images/tarot/44.jpg",
+    "meaning": {
+      "upright": "自立、優雅、成果の享受",
+      "reversed": "虚栄、依存、金銭の失敗"
+    }
+  },
+  {
+    "id": "pentacles_10",
+    "name": "ペンタクルの10",
+    "english_name": "Ten of Pentacles",
+    "image_url": "/images/tarot/45.jpg",
+    "meaning": {
+      "upright": "富、遺産、家族の繁栄",
+      "reversed": "家族の不和、浪費、伝統の崩壊"
+    }
+  },
+  {
+    "id": "pentacles_11",
+    "name": "ペンタクルのペイジ",
+    "english_name": "Page of Pentacles",
+    "image_url": "/images/tarot/46.jpg",
+    "meaning": {
+      "upright": "学び、真面目、現実的な可能性",
+      "reversed": "不注意、怠慢、非現実的"
+    }
+  },
+  {
+    "id": "pentacles_12",
+    "name": "ペンタクルのナイト",
+    "english_name": "Knight of Pentacles",
+    "image_url": "/images/tarot/47.jpg",
+    "meaning": {
+      "upright": "着実、信頼、責任感",
+      "reversed": "停滞、頑固、無責任"
+    }
+  },
+  {
+    "id": "pentacles_13",
+    "name": "ペンタクルのクイーン",
+    "english_name": "Queen of Pentacles",
+    "image_url": "/images/tarot/48.jpg",
+    "meaning": {
+      "upright": "実務的、温厚、安定した豊かさ",
+      "reversed": "不安定、疑い深い、浪費"
+    }
+  },
+  {
+    "id": "pentacles_14",
+    "name": "ペンタクルのキング",
+    "english_name": "King of Pentacles",
+    "image_url": "/images/tarot/49.jpg",
+    "meaning": {
+      "upright": "成功者、指導力、経済的安定",
+      "reversed": "独裁的、腐敗、強欲"
+    }
+  },
+  {
+    "id": "swords_01",
+    "name": "ソードのエース",
+    "english_name": "Ace of Swords",
+    "image_url": "/images/tarot/50.jpg",
+    "meaning": {
+      "upright": "決断、突破、明晰な思考",
+      "reversed": "混乱、誤った判断、強引"
+    }
+  },
+  {
+    "id": "swords_02",
+    "name": "ソードの2",
+    "english_name": "Two of Swords",
+    "image_url": "/images/tarot/51.jpg",
+    "meaning": {
+      "upright": "均衡、妥協、決断の回避",
+      "reversed": "混乱、情報の過多、不均衡"
+    }
+  },
+  {
+    "id": "swords_03",
+    "name": "ソードの3",
+    "english_name": "Three of Swords",
+    "image_url": "/images/tarot/52.jpg",
+    "meaning": {
+      "upright": "悲しみ、離別、心の痛み",
+      "reversed": "回復、癒しの始まり、抑圧された感情"
+    }
+  },
+  {
+    "id": "swords_04",
+    "name": "ソードの4",
+    "english_name": "Four of Swords",
+    "image_url": "/images/tarot/53.jpg",
+    "meaning": {
+      "upright": "休息、黙想、一時停止",
+      "reversed": "活動の再開、燃え尽き、焦り"
+    }
+  },
+  {
+    "id": "swords_05",
+    "name": "ソードの5",
+    "english_name": "Five of Swords",
+    "image_url": "/images/tarot/54.jpg",
+    "meaning": {
+      "upright": "利己的な勝利、不名誉、対立",
+      "reversed": "和解の兆し、後悔、争いの終結"
+    }
+  },
+  {
+    "id": "swords_06",
+    "name": "ソードの6",
+    "english_name": "Six of Swords",
+    "image_url": "/images/tarot/55.jpg",
+    "meaning": {
+      "upright": "再出発、困難からの脱出、旅立ち",
+      "reversed": "停滞、未解決の問題、困難への逆戻り"
+    }
+  },
+  {
+    "id": "swords_07",
+    "name": "ソードの7",
+    "english_name": "Seven of Swords",
+    "image_url": "/images/tarot/56.jpg",
+    "meaning": {
+      "upright": "策略、逃避、独断専行",
+      "reversed": "露見、再考、アドバイスの受け入れ"
+    }
+  },
+  {
+    "id": "swords_08",
+    "name": "ソードの8",
+    "english_name": "Eight of Swords",
+    "image_url": "/images/tarot/57.jpg",
+    "meaning": {
+      "upright": "自己規制、孤立、身動きが取れない",
+      "reversed": "解放、新たな視点、束縛からの脱却"
+    }
+  },
+  {
+    "id": "swords_09",
+    "name": "ソードの9",
+    "english_name": "Nine of Swords",
+    "image_url": "/images/tarot/58.jpg",
+    "meaning": {
+      "upright": "不安、悪夢、深い悩み",
+      "reversed": "絶望の底、希望の光、悩みの解消"
+    }
+  },
+  {
+    "id": "swords_10",
+    "name": "ソードの10",
+    "english_name": "Ten of Swords",
+    "image_url": "/images/tarot/59.jpg",
+    "meaning": {
+      "upright": "破滅、どん底、終わりと始まり",
+      "reversed": "回復、再起、最悪の回避"
+    }
+  },
+  {
+    "id": "swords_11",
+    "name": "ソードのペイジ",
+    "english_name": "Page of Swords",
+    "image_url": "/images/tarot/60.jpg",
+    "meaning": {
+      "upright": "警戒、好奇心、機敏",
+      "reversed": "狡猾、軽率、予想外のトラブル"
+    }
+  },
+  {
+    "id": "swords_12",
+    "name": "ソードのナイト",
+    "english_name": "Knight of Swords",
+    "image_url": "/images/tarot/61.jpg",
+    "meaning": {
+      "upright": "急進、勇気、知的な挑戦",
+      "reversed": "暴走、無鉄砲、口論"
+    }
+  },
+  {
+    "id": "swords_13",
+    "name": "ソードのクイーン",
+    "english_name": "Queen of Swords",
+    "image_url": "/images/tarot/62.jpg",
+    "meaning": {
+      "upright": "自立、厳しい判断、知性",
+      "reversed": "冷酷、偏見、感情的な反応"
+    }
+  },
+  {
+    "id": "swords_14",
+    "name": "ソードのキング",
+    "english_name": "King of Swords",
+    "image_url": "/images/tarot/63.jpg",
+    "meaning": {
+      "upright": "権威、公正な判断、倫理観",
+      "reversed": "独裁、冷酷、不当な支配"
+    }
+  },
+  {
+    "id": "wands_01",
+    "name": "ワンドのエース",
+    "english_name": "Ace of Wands",
+    "image_url": "/images/tarot/64.jpg",
+    "meaning": {
+      "upright": "情熱、新たな始まり、インスピレーション",
+      "reversed": "意欲の減退、目的の喪失、空回り"
+    }
+  },
+  {
+    "id": "wands_02",
+    "name": "ワンドの2",
+    "english_name": "Two of Wands",
+    "image_url": "/images/tarot/65.jpg",
+    "meaning": {
+      "upright": "計画、展望、野心",
+      "reversed": "不十分な計画、恐怖、停滞"
+    }
+  },
+  {
+    "id": "wands_03",
+    "name": "ワンドの3",
+    "english_name": "Three of Wands",
+    "image_url": "/images/tarot/66.jpg",
+    "meaning": {
+      "upright": "拡大、協力、成功の兆し",
+      "reversed": "遅延、期待外れ、協力者の不在"
+    }
+  },
+  {
+    "id": "wands_04",
+    "name": "ワンドの4",
+    "english_name": "Four of Wands",
+    "image_url": "/images/tarot/67.jpg",
+    "meaning": {
+      "upright": "祝福、調和、平和",
+      "reversed": "不安定、一時的な成功、不調和"
+    }
+  },
+  {
+    "id": "wands_05",
+    "name": "ワンドの5",
+    "english_name": "Five of Wands",
+    "image_url": "/images/tarot/68.jpg",
+    "meaning": {
+      "upright": "競争、葛藤、混乱",
+      "reversed": "争いの回避、妥協、収束"
+    }
+  },
+  {
+    "id": "wands_06",
+    "name": "ワンドの6",
+    "english_name": "Six of Wands",
+    "image_url": "/images/tarot/69.jpg",
+    "meaning": {
+      "upright": "勝利、賞賛、自信",
+      "reversed": "自信喪失、不名誉、停滞"
+    }
+  },
+  {
+    "id": "wands_07",
+    "name": "ワンドの7",
+    "english_name": "Seven of Wands",
+    "image_url": "/images/tarot/70.jpg",
+    "meaning": {
+      "upright": "奮闘、防衛、粘り強さ",
+      "reversed": "圧倒される、自信の欠如、あきらめ"
+    }
+  },
+  {
+    "id": "wands_08",
+    "name": "ワンドの8",
+    "english_name": "Eight of Wands",
+    "image_url": "/images/tarot/71.jpg",
+    "meaning": {
+      "upright": "迅速、急展開、ニュース",
+      "reversed": "パニック、停滞、不測の事態"
+    }
+  },
+  {
+    "id": "wands_09",
+    "name": "ワンドの9",
+    "english_name": "Nine of Wands",
+    "image_url": "/images/tarot/72.jpg",
+    "meaning": {
+      "upright": "警戒、忍耐、防御姿勢",
+      "reversed": "疲労困憊、防衛不能、固執"
+    }
+  },
+  {
+    "id": "wands_10",
+    "name": "ワンドの10",
+    "english_name": "Ten of Wands",
+    "image_url": "/images/tarot/73.jpg",
+    "meaning": {
+      "upright": "重圧、過労、責任",
+      "reversed": "解放、崩壊、負担の軽減"
+    }
+  },
+  {
+    "id": "wands_11",
+    "name": "ワンドのペイジ",
+    "english_name": "Page of Wands",
+    "image_url": "/images/tarot/74.jpg",
+    "meaning": {
+      "upright": "冒険心、吉報、情熱",
+      "reversed": "悪い知らせ、未熟さ、無責任"
+    }
+  },
+  {
+    "id": "wands_12",
+    "name": "ワンドのナイト",
+    "english_name": "Knight of Wands",
+    "image_url": "/images/tarot/75.jpg",
+    "meaning": {
+      "upright": "行動力、勇敢、熱血",
+      "reversed": "短気、無鉄砲、口論"
+    }
+  },
+  {
+    "id": "wands_13",
+    "name": "ワンドのクイーン",
+    "english_name": "Queen of Wands",
+    "image_url": "/images/tarot/76.jpg",
+    "meaning": {
+      "upright": "魅力、社交性、自信",
+      "reversed": "嫉妬深さ、独占欲、不誠実"
+    }
+  },
+  {
+    "id": "wands_14",
+    "name": "ワンドのキング",
+    "english_name": "King of Wands",
+    "image_url": "/images/tarot/77.jpg",
+    "meaning": {
+      "upright": "リーダーシップ、実行力、寛大",
+      "reversed": "独裁、短気、強引"
+    }
+  }
+]

@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* カスタムテーマ変数の定義 */
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  /* 占いサイト用のミスティックカラー */
+  --color-mystic-bg: #050510;
+  --color-mystic-gold: #c5a059;
+  --color-mystic-blue: #6366f1;
+}
+
+/* 3Dカードと背景のベース設定 */
+@layer base {
+  :root {
+    --background: #050510;
+    --foreground: #e0e7ff;
+  }
+
+  /* html全体に背景を指定するのが最も確実です */
+  html {
+    min-height: 100vh;
+    background-color: #050510; /* 画像が読み込まれるまでの予備色 */
+    background-image: 
+      linear-gradient(to bottom, rgba(5, 5, 16, 0.6), rgba(5, 5, 16, 0.8)), 
+      url('/images/bg-room.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  body {
+    /* body自体の背景色を消すことで、htmlの背景画像が見えるようにします */
+    background: transparent !important;
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+}
+
+/* 3Dアニメーションと特殊効果 */
+@layer utilities {
+  /* カードがクルッと回るための奥行き */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  /* 回転時に表面と裏面を別々に管理 */
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  /* 回転したときに「裏側の絵」が透けないようにする */
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  /* カード表面（最初は180度裏を向いている） */
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+
+  /* 魔法陣やクリスタルの輝きを演出するグロー効果 */
+  .glow-blue {
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), 0 0 5px rgba(99, 102, 241, 0.2);
+  }
+
+  .glow-text {
+    text-shadow: 0 0 10px rgba(165, 180, 252, 0.5);
+  }
+
+  /* ガラスのような透過質感（グラスモーフィズム） */
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* アニメーション：魔法陣の鼓動 */
+@keyframes magic-pulse {
+  0% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.05); }
+  100% { opacity: 0.2; transform: scale(1); }
+}
+
+.animate-magic {
+  animation: magic-pulse 4s ease-in-out infinite;
+}
+
+.font-shippori {
+  font-family: var(--font-shippori), serif !important;
+}
