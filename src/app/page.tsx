@@ -7,17 +7,17 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// セッション維持の設定を強化（サブドメイン間共有設定を追加）
+// 型エラーを避けるため、オプションをシンプルに
+// storageKey をカチピ側と同じ 'sb-auth-token' にすることで、ブラウザが自動的にCookieを拾います
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    storageKey: 'sb-auth-token', // これをカチピ側と絶対に合わせる
+    storageKey: 'sb-auth-token', 
   }
 }) : null;
 
-// カチピの新しいドメインURL
 const KACHIPEA_LOGIN_URL = "https://kachi.tarotai.jp/login"; 
 
 const TarotCard = ({ card, index, isFlipped, onFlip }: any) => {
@@ -51,18 +51,31 @@ export default function CelticCrossPage() {
   useEffect(() => {
     if (!supabase) return;
 
-    // 初期セッション確認を非同期で実行
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      if (session?.user) fetchHistory(session.user.id);
+    // 【強化ポイント】
+    // 1. URLにセッションが含まれている場合（OAuth戻りなど）を即座に処理
+    // 2. その後 getSession で既存のCookieを確認
+    const checkUser = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (session) {
+        setUser(session.user);
+        fetchHistory(session.user.id);
+      }
     };
-    checkSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchHistory(session.user.id);
+    checkUser();
+
+    // ログイン・ログアウトの変化をリアルタイムで監視
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth Event:", event); // デバッグ用：何が起きているかコンソールで見れます
+      if (session) {
+        setUser(session.user);
+        fetchHistory(session.user.id);
+      } else {
+        setUser(null);
+        setHistory([]);
+      }
     });
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -73,8 +86,8 @@ export default function CelticCrossPage() {
   };
 
   const handleLogin = () => {
-    // 戻り先を https://tarotai.jp に設定
-    const currentUrl = "https://tarotai.jp"; 
+    // 戻り先URL。ここが tarotai.jp であることを確認
+    const currentUrl = window.location.origin; 
     window.location.href = `${KACHIPEA_LOGIN_URL}?redirect_to=${encodeURIComponent(currentUrl)}`;
   };
 
@@ -116,7 +129,6 @@ export default function CelticCrossPage() {
 
   return (
     <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight">
-      
       <div className="w-full max-w-5xl flex justify-end items-center gap-4 py-4">
         {!user ? (
           <div className="flex items-center gap-3">
@@ -144,19 +156,11 @@ export default function CelticCrossPage() {
       <div className="relative">
         <AnimatePresence>
           {deck.length === 10 && flippedIndices.length < 10 && (
-            <motion.div 
-              initial={{ opacity: 0, y: -20 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              exit={{ opacity: 0 }}
-              className="absolute -top-16 left-0 right-0 text-center z-20"
-            >
-              <p className="text-indigo-300 font-bold tracking-widest text-sm animate-pulse">
-                カードを１枚ずつゆっくり裏返してください
-              </p>
+            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute -top-16 left-0 right-0 text-center z-20">
+              <p className="text-indigo-300 font-bold tracking-widest text-sm animate-pulse">カードを１枚ずつゆっくり裏返してください</p>
             </motion.div>
           )}
         </AnimatePresence>
-
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none scale-150 opacity-20">
             <div className="w-[400px] h-[400px] border border-blue-500 rounded-full animate-magic"></div>
         </div>
@@ -199,7 +203,6 @@ export default function CelticCrossPage() {
         )}
       </AnimatePresence>
 
-      {/* 履歴セクション（前回同様のロジック） */}
       {user && history.length > 0 && (
         <div className="w-full max-w-5xl mt-24 mb-32 px-4">
           <h3 className="text-xl font-black text-indigo-200/50 mb-10 tracking-[0.2em] uppercase text-center">過去の記録</h3>
@@ -219,7 +222,6 @@ export default function CelticCrossPage() {
         </div>
       )}
 
-      {/* モーダル */}
       <AnimatePresence>
         {selectedHistory && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setSelectedHistory(null)}>
@@ -232,7 +234,6 @@ export default function CelticCrossPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }
