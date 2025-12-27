@@ -6,12 +6,20 @@ import { createClient } from '@supabase/supabase-js';
 // Supabase初期化
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-// セッション維持の設定を強化
+
+// セッション維持の設定を強化（サブドメイン間共有設定を追加）
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    storageKey: 'sb-auth-token', // 共通のキーを使用
+    cookieOptions: {
+      domain: '.tarotai.jp', // 親ドメインで共有（先頭のドットが重要）
+      path: '/',
+      sameSite: 'lax',
+      secure: true,
+    }
   }
 }) : null;
 
@@ -48,10 +56,15 @@ export default function CelticCrossPage() {
 
   useEffect(() => {
     if (!supabase) return;
-    supabase.auth.getSession().then(({ data: { session } }) => {
+
+    // 初期セッション確認を非同期で実行
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
       if (session?.user) fetchHistory(session.user.id);
-    });
+    };
+    checkSession();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) fetchHistory(session.user.id);
@@ -192,7 +205,40 @@ export default function CelticCrossPage() {
         )}
       </AnimatePresence>
 
-      {/* 履歴セクション（省略：必要に応じて前回のものを維持） */}
+      {/* 履歴セクション（前回同様のロジック） */}
+      {user && history.length > 0 && (
+        <div className="w-full max-w-5xl mt-24 mb-32 px-4">
+          <h3 className="text-xl font-black text-indigo-200/50 mb-10 tracking-[0.2em] uppercase text-center">過去の記録</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {history.slice(0, 6).map((item) => (
+              <motion.div key={item.id} whileHover={{ y: -5, backgroundColor: "rgba(30, 27, 75, 0.4)" }} onClick={() => setSelectedHistory(item)} className="glass p-6 rounded-2xl border border-indigo-500/10 cursor-pointer transition-colors">
+                <p className="text-[10px] text-indigo-400/60 mb-2 font-mono font-bold">{new Date(item.created_at).toLocaleDateString()}</p>
+                <h4 className="text-sm text-indigo-100 font-bold line-clamp-2 leading-relaxed mb-4">{item.question || "無題の相談"}</h4>
+                <div className="flex -space-x-2 opacity-50">
+                  {item.cards?.slice(0, 3).map((c: any, i: number) => (
+                    <div key={i} className="w-6 h-10 border border-indigo-400/30 rounded bg-indigo-900/40 flex items-center justify-center text-[8px] font-bold">{i + 1}</div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* モーダル */}
+      <AnimatePresence>
+        {selectedHistory && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setSelectedHistory(null)}>
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="glass max-w-2xl w-full max-h-[80vh] overflow-y-auto p-8 md:p-12 rounded-3xl border border-indigo-400/20 relative" onClick={(e) => e.stopPropagation()}>
+              <button onClick={() => setSelectedHistory(null)} className="absolute top-6 right-6 text-indigo-300/50 hover:text-white transition-colors">✕</button>
+              <p className="text-xs text-indigo-400/60 mb-4 tracking-widest font-mono font-bold">{new Date(selectedHistory.created_at).toLocaleString()}</p>
+              <h3 className="text-xl md:text-2xl text-indigo-100 font-black mb-8 leading-tight">問：{selectedHistory.question}</h3>
+              <p className="text-indigo-50 font-medium leading-relaxed tracking-normal whitespace-pre-wrap md:text-lg">{selectedHistory.advice}</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
