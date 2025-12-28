@@ -3,11 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase初期化
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// storageKey を指定して Cookie を自動検知させる
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
@@ -46,8 +44,8 @@ export default function CelticCrossPage() {
   const [user, setUser] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [selectedHistory, setSelectedHistory] = useState<any>(null);
+  const [mounted, setMounted] = useState(false); // ハイドレーション防止フラグ
 
-  // 定義順エラーを避けるため fetchHistory を先に記述
   const fetchHistory = async (userId: string) => {
     if (!supabase) return;
     const { data, error } = await supabase.from('tarot_history').select('*').eq('user_id', userId).order('created_at', { ascending: false });
@@ -55,17 +53,16 @@ export default function CelticCrossPage() {
   };
 
   useEffect(() => {
+    setMounted(true); // ブラウザにマウントされたことを記録
+    
     if (!supabase) return;
 
     const initAuth = async () => {
-      // 既存セッションの取得
       const { data: { session } } = await supabase.auth.getSession();
-      
       if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
       } else {
-        // SDKが自動で見つけられない場合、直接認証サーバーへ確認
         const hasCookie = document.cookie.includes('sb-auth-token');
         if (hasCookie) {
           const { data: { user: cookieUser } } = await supabase.auth.getUser();
@@ -133,6 +130,11 @@ export default function CelticCrossPage() {
     }
   };
 
+  // マウントされる前は空の背景だけ返す（エラー回避）
+  if (!mounted) {
+    return <div className="min-h-screen bg-[#0a0a20]" />;
+  }
+
   return (
     <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight">
       <div className="w-full max-w-5xl flex justify-end items-center gap-4 py-4">
@@ -172,9 +174,6 @@ export default function CelticCrossPage() {
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none scale-150 opacity-20">
-            <div className="w-[400px] h-[400px] border border-blue-500 rounded-full animate-magic"></div>
-        </div>
         <div className="grid grid-cols-4 grid-rows-4 gap-4 md:gap-8 w-fit mx-auto relative z-10">
           {deck.length === 10 && deck.map((card, i) => (
             <TarotCard key={card.id + i} card={card} index={i} isFlipped={flippedIndices.includes(i)} onFlip={(idx: number) => { if (deck.length > 0 && !flippedIndices.includes(idx)) setFlippedIndices([...flippedIndices, idx]); }} />
@@ -182,73 +181,23 @@ export default function CelticCrossPage() {
         </div>
       </div>
 
-      <AnimatePresence>
-        {flippedIndices.length === 10 && (
-          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-8 glass border border-indigo-500/30 rounded-3xl max-w-3xl w-full shadow-2xl relative z-20 overflow-hidden mb-20">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent"></div>
-            <h2 className="text-2xl mb-8 text-indigo-200 font-black text-center uppercase tracking-[0.2em]">リーディングをする</h2>
-            {!aiAdvice ? (
-              <div className="text-center py-10">
-                <p className="text-indigo-300/70 mb-8 font-medium">すべてのカードが並びました。あなたの物語をAIが読み解きます。</p>
-                <button onClick={askAI} disabled={loading} className="bg-gradient-to-r from-indigo-800 to-purple-900 px-10 py-4 rounded-xl font-black border border-indigo-400/30 hover:border-indigo-300 transition-all tracking-widest">{loading ? "星々を読み解いています..." : "AIに詳しく相談する"}</button>
-              </div>
-            ) : (
-              <div className="bg-black/30 p-8 rounded-xl border border-white/5 shadow-inner relative">
-                <div className="absolute top-2 left-2 w-4 h-4 border-t border-l border-indigo-500/30"></div>
-                <div className="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-indigo-500/30"></div>
-                <p className="whitespace-pre-wrap text-left text-indigo-50 font-medium leading-relaxed tracking-normal md:text-lg">{aiAdvice}</p>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {user && history.length > 0 && (
-        <div className="w-full max-w-5xl mt-24 mb-32 px-4">
-          <h3 className="text-xl font-black text-indigo-200/50 mb-10 tracking-[0.2em] uppercase text-center">過去の記録</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {history.slice(0, 6).map((item) => (
-              <motion.div key={item.id} whileHover={{ y: -5, backgroundColor: "rgba(30, 27, 75, 0.4)" }} onClick={() => setSelectedHistory(item)} className="glass p-6 rounded-2xl border border-indigo-500/10 cursor-pointer transition-colors">
-                <p className="text-[10px] text-indigo-400/60 mb-2 font-mono font-bold">{new Date(item.created_at).toLocaleDateString()}</p>
-                <h4 className="text-sm text-indigo-100 font-bold line-clamp-2 leading-relaxed mb-4">{item.question || "無題の相談"}</h4>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <AnimatePresence>
-        {selectedHistory && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setSelectedHistory(null)}>
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="glass max-w-2xl w-full max-h-[80vh] overflow-y-auto p-8 md:p-12 rounded-3xl border border-indigo-400/20 relative" onClick={(e) => e.stopPropagation()}>
-              <button onClick={() => setSelectedHistory(null)} className="absolute top-6 right-6 text-indigo-300/50 hover:text-white transition-colors">✕</button>
-              <h3 className="text-xl md:text-2xl text-indigo-100 font-black mb-8 leading-tight">問：{selectedHistory.question}</h3>
-              <p className="text-indigo-50 font-medium leading-relaxed tracking-normal whitespace-pre-wrap md:text-lg">{selectedHistory.advice}</p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* --- ここからデバッグパネル --- */}
+      {/* デバッグモニター */}
       <div className="mt-20 p-4 bg-black/80 border border-red-500/50 rounded-lg text-left font-mono text-[10px] w-full max-w-2xl overflow-auto z-[9999]">
         <h4 className="text-red-500 font-bold mb-2 uppercase">Debug Monitor</h4>
         <p>【現在ログイン中】: {user ? user.email : '未ログイン (null)'}</p>
         <p>【Cookie (sb-auth-token)】: {typeof document !== 'undefined' && document.cookie.includes('sb-auth-token') ? '✅ あり' : '❌ なし'}</p>
-        <p>【Supabase 初期化】: {supabase ? '✅ 完了' : '❌ 未完了'}</p>
-        <p>【プロジェクトURL】: {process.env.NEXT_PUBLIC_SUPABASE_URL || '❌ 未設定'}</p>
-        
+        <p>【プロジェクトURL】: {supabaseUrl || '❌ 未設定'}</p>
         <button 
           onClick={async () => {
-            if (!supabase) return alert("Supabaseが未初期化です");
-            const { data, error } = await supabase.auth.getUser();
-            alert(JSON.stringify({ data, error }, null, 2));
+            if (!supabase) return alert("Supabaseが未初期化です。");
+            const res = await supabase.auth.getUser();
+            alert(JSON.stringify(res, null, 2));
           }}
           className="mt-4 px-2 py-1 bg-red-900 text-white rounded hover:bg-red-700 transition-colors"
         >
-          強制認証テスト (Alert表示)
+          強制認証テスト
         </button>
       </div>
-      {/* --- ここまでデバッグパネル --- */}
     </div>
   );
 }
