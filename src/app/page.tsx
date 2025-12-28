@@ -7,7 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// 画像で確認されたCookie名 'sb-auth-token' を storageKey に指定
+// Cookie名 'sb-auth-token' を指定
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
@@ -50,27 +50,36 @@ export default function CelticCrossPage() {
   useEffect(() => {
     if (!supabase) return;
 
-    const initAuth = async () => {
-      // getSession は自動的に 'sb-auth-token' というCookieを探しに行きます
+    const checkAuth = async () => {
+      // 1. 標準的な方法でセッション取得を試みる
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      
+      if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
       } else {
-        // Cookieの読み込みにラグがある場合を考慮し getUser も実行
-        const { data: { user: cookieUser } } = await supabase.auth.getUser();
-        if (cookieUser) {
-          setUser(cookieUser);
-          fetchHistory(cookieUser.id);
+        // 2. もしgetSessionが失敗しても、Cookie(sb-auth-token)があるなら強制読み込み
+        const cookie = document.cookie.split('; ').find(row => row.startsWith('sb-auth-token='));
+        if (cookie) {
+          try {
+            // Cookieの中身を解析してユーザー情報をセット
+            const { data: { user: cookieUser } } = await supabase.auth.getUser();
+            if (cookieUser) {
+              setUser(cookieUser);
+              fetchHistory(cookieUser.id);
+            }
+          } catch (e) {
+            console.error("Cookie parsing failed", e);
+          }
         }
       }
     };
 
-    initAuth();
+    checkAuth();
 
-    // ログイン・ログアウトの変化をリアルタイムで監視し反映
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+      console.log("Auth Event In App:", event);
+      if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
       } else if (event === 'SIGNED_OUT') {
@@ -89,7 +98,8 @@ export default function CelticCrossPage() {
   };
 
   const handleLogin = () => {
-    const currentUrl = "https://tarotai.jp"; 
+    // リダイレクト先を現在のオリジン（wwwあり/なし自動判定）に合わせる
+    const currentUrl = window.location.origin;
     window.location.href = `${KACHIPEA_LOGIN_URL}?redirect_to=${encodeURIComponent(currentUrl)}`;
   };
 
@@ -142,7 +152,12 @@ export default function CelticCrossPage() {
         ) : (
           <div className="flex items-center gap-4">
             <span className="text-xs text-indigo-200 opacity-70 font-medium">ようこそ {user.email?.split('@')[0]} さん</span>
-            <button onClick={() => supabase?.auth.signOut()} className="text-[10px] text-indigo-400/50 hover:text-indigo-300 uppercase font-bold tracking-tighter">Logout</button>
+            <button onClick={() => {
+              supabase?.auth.signOut();
+              // Cookieを削除して強制リロード（同期を確実にするため）
+              document.cookie = "sb-auth-token=; path=/; domain=.tarotai.jp; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+              window.location.reload();
+            }} className="text-[10px] text-indigo-400/50 hover:text-indigo-300 uppercase font-bold tracking-tighter">Logout</button>
           </div>
         )}
       </div>
