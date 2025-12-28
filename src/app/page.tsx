@@ -7,19 +7,13 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// 1. auth.cookieOptions を追加して、サブドメイン間での共有をプログラムから強制する
+// ビルドエラーの原因となった cookieOptions を削除し、標準的な構成に戻します
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    storageKey: 'sb-auth-token', 
-    cookieOptions: {
-      domain: '.tarotai.jp', // 先頭のドットが重要です
-      path: '/',
-      sameSite: 'lax',
-      secure: true,
-    }
+    storageKey: 'sb-auth-token', // ここを画像と一致させておくことが重要です
   }
 }) : null;
 
@@ -53,7 +47,7 @@ export default function CelticCrossPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [selectedHistory, setSelectedHistory] = useState<any>(null);
 
-  // 2. fetchHistory を useEffect の前に定義（定義順エラーの解消）
+  // 定義順エラーを避けるため fetchHistory を先に記述
   const fetchHistory = async (userId: string) => {
     if (!supabase) return;
     const { data, error } = await supabase.from('tarot_history').select('*').eq('user_id', userId).order('created_at', { ascending: false });
@@ -64,13 +58,14 @@ export default function CelticCrossPage() {
     if (!supabase) return;
 
     const initAuth = async () => {
-      // 3. getSession() を試行し、失敗しても getUser() で強制的に検証
+      // getSession は storageKey に基づいて自動的にブラウザのCookieを探します
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
       } else {
+        // SDKがCookieを自動で見つけられない場合、getUser でサーバーと直接照合
         const hasCookie = document.cookie.includes('sb-auth-token');
         if (hasCookie) {
           const { data: { user: cookieUser } } = await supabase.auth.getUser();
@@ -85,7 +80,6 @@ export default function CelticCrossPage() {
     initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth Event:", event);
       if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
@@ -155,6 +149,7 @@ export default function CelticCrossPage() {
             <button onClick={async () => {
               if (supabase) {
                 await supabase.auth.signOut();
+                // 確実にCookieを掃除してリロード
                 document.cookie = "sb-auth-token=; path=/; domain=.tarotai.jp; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                 window.location.reload();
               }
@@ -163,8 +158,7 @@ export default function CelticCrossPage() {
         )}
       </div>
 
-      <h1 className="text-4xl md:text-6xl font-black my-12 text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 glow-text tracking-tighter uppercase drop-shadow-[0_0_15px_rgba(99,102,241,0.5)] text-center">
-        タロット占い</h1>
+      <h1 className="text-4xl md:text-6xl font-black my-12 text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 glow-text tracking-tighter uppercase drop-shadow-[0_0_15px_rgba(99,102,241,0.5)] text-center">タロット占い</h1>
       
       <div className="glass flex flex-col gap-4 mb-16 w-full max-w-md p-6 rounded-2xl glow-blue">
         <input type="text" placeholder="相談したい悩みをここへ..." className="bg-black/40 border border-indigo-500/30 rounded-lg px-4 py-3 text-indigo-100 placeholder:text-indigo-400/50 focus:outline-none focus:border-indigo-400 transition-all font-medium" value={userQuestion} onChange={(e) => setUserQuestion(e.target.value)} />
@@ -204,17 +198,6 @@ export default function CelticCrossPage() {
                 <div className="absolute top-2 left-2 w-4 h-4 border-t border-l border-indigo-500/30"></div>
                 <div className="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-indigo-500/30"></div>
                 <p className="whitespace-pre-wrap text-left text-indigo-50 font-medium leading-relaxed tracking-normal md:text-lg">{aiAdvice}</p>
-                <div className="mt-12 flex flex-col items-center gap-4">
-                  {user ? (
-                    <p className="text-[10px] text-indigo-400/40 tracking-widest uppercase font-bold italic">鑑定結果は履歴に保存されました</p>
-                  ) : (
-                    <p className="text-[10px] text-amber-400/60 tracking-widest uppercase font-bold italic bg-amber-900/10 px-3 py-1 rounded">※ 未ログインのため履歴は保存されません</p>
-                  )}
-                  <button onClick={startFortune} className="group relative px-6 py-2 text-xs text-indigo-400 hover:text-indigo-200 transition-colors uppercase font-black tracking-widest">
-                    <span className="relative z-10 font-black">新しい運命を占う</span>
-                    <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                  </button>
-                </div>
               </div>
             )}
           </motion.div>
@@ -229,11 +212,6 @@ export default function CelticCrossPage() {
               <motion.div key={item.id} whileHover={{ y: -5, backgroundColor: "rgba(30, 27, 75, 0.4)" }} onClick={() => setSelectedHistory(item)} className="glass p-6 rounded-2xl border border-indigo-500/10 cursor-pointer transition-colors">
                 <p className="text-[10px] text-indigo-400/60 mb-2 font-mono font-bold">{new Date(item.created_at).toLocaleDateString()}</p>
                 <h4 className="text-sm text-indigo-100 font-bold line-clamp-2 leading-relaxed mb-4">{item.question || "無題の相談"}</h4>
-                <div className="flex -space-x-2 opacity-50">
-                  {item.cards?.slice(0, 3).map((c: any, i: number) => (
-                    <div key={i} className="w-6 h-10 border border-indigo-400/30 rounded bg-indigo-900/40 flex items-center justify-center text-[8px] font-bold">{i + 1}</div>
-                  ))}
-                </div>
               </motion.div>
             ))}
           </div>
@@ -245,7 +223,6 @@ export default function CelticCrossPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setSelectedHistory(null)}>
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="glass max-w-2xl w-full max-h-[80vh] overflow-y-auto p-8 md:p-12 rounded-3xl border border-indigo-400/20 relative" onClick={(e) => e.stopPropagation()}>
               <button onClick={() => setSelectedHistory(null)} className="absolute top-6 right-6 text-indigo-300/50 hover:text-white transition-colors">✕</button>
-              <p className="text-xs text-indigo-400/60 mb-4 tracking-widest font-mono font-bold">{new Date(selectedHistory.created_at).toLocaleString()}</p>
               <h3 className="text-xl md:text-2xl text-indigo-100 font-black mb-8 leading-tight">問：{selectedHistory.question}</h3>
               <p className="text-indigo-50 font-medium leading-relaxed tracking-normal whitespace-pre-wrap md:text-lg">{selectedHistory.advice}</p>
             </motion.div>
