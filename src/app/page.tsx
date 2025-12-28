@@ -7,8 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// 型エラーを避けるため、オプションをシンプルに
-// storageKey をカチピ側と同じ 'sb-auth-token' にすることで、ブラウザが自動的にCookieを拾います
+// 画像で確認されたCookie名 'sb-auth-token' を storageKey に指定
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
@@ -48,18 +47,17 @@ export default function CelticCrossPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [selectedHistory, setSelectedHistory] = useState<any>(null);
 
-useEffect(() => {
+  useEffect(() => {
     if (!supabase) return;
 
     const initAuth = async () => {
-      // 1. まずは現在のURLのハッシュ（#access_tokenなど）や既存のセッションをチェック
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
+      // getSession は自動的に 'sb-auth-token' というCookieを探しに行きます
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setUser(session.user);
         fetchHistory(session.user.id);
       } else {
-        // 2. セッションがない場合、念のため getUser でCookieから直接ユーザー取得を試みる
+        // Cookieの読み込みにラグがある場合を考慮し getUser も実行
         const { data: { user: cookieUser } } = await supabase.auth.getUser();
         if (cookieUser) {
           setUser(cookieUser);
@@ -70,9 +68,8 @@ useEffect(() => {
 
     initAuth();
 
-    // 3. ログイン状態の変化（ログイン/ログアウト）をリアルタイムで監視
+    // ログイン・ログアウトの変化をリアルタイムで監視し反映
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth Event:", event); // 動作確認用
       if (session) {
         setUser(session.user);
         fetchHistory(session.user.id);
@@ -85,7 +82,6 @@ useEffect(() => {
     return () => subscription.unsubscribe();
   }, []);
 
-
   const fetchHistory = async (userId: string) => {
     if (!supabase) return;
     const { data, error } = await supabase.from('tarot_history').select('*').eq('user_id', userId).order('created_at', { ascending: false });
@@ -93,8 +89,7 @@ useEffect(() => {
   };
 
   const handleLogin = () => {
-    // 戻り先URL。ここが tarotai.jp であることを確認
-    const currentUrl = "https://www.tarotai.jp"; 
+    const currentUrl = "https://tarotai.jp"; 
     window.location.href = `${KACHIPEA_LOGIN_URL}?redirect_to=${encodeURIComponent(currentUrl)}`;
   };
 
