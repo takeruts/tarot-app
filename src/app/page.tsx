@@ -42,29 +42,43 @@ export default function CelticCrossPage() {
   const [loading, setLoading] = useState(false);
   const [userQuestion, setUserQuestion] = useState("");
   const [user, setUser] = useState<any>(null);
+  const [nickname, setNickname] = useState<string | null>(null);
   const [history, setHistory] = useState<any[]>([]);
-  const [selectedHistory, setSelectedHistory] = useState<any>(null);
-  const [mounted, setMounted] = useState(false); // ハイドレーション防止フラグ
+  const [mounted, setMounted] = useState(false);
 
+  // 履歴取得
   const fetchHistory = async (userId: string) => {
     if (!supabase) return;
     const { data, error } = await supabase.from('tarot_history').select('*').eq('user_id', userId).order('created_at', { ascending: false });
     if (!error && data) setHistory(data);
   };
 
-  useEffect(() => {
-    setMounted(true); // ブラウザにマウントされたことを記録
+  // ニックネーム取得
+  const fetchNickname = async (userId: string) => {
+    if (!supabase) return;
+    const { data, error } = await supabase
+      .from('value_profiles')
+      .select('nickname')
+      .eq('user_id', userId)
+      .single();
     
+    if (!error && data) {
+      setNickname(data.nickname);
+    } else {
+      setNickname(null);
+    }
+  };
+
+  useEffect(() => {
+    setMounted(true);
     if (!supabase) return;
 
     const initAuth = async () => {
-      // 1. URLパラメータからトークンを取得
       const params = new URLSearchParams(window.location.search);
       const accessToken = params.get('access_token');
       const refreshToken = params.get('refresh_token');
 
       if (accessToken && refreshToken) {
-        // トークンがある場合はセッションをセット
         const { data, error } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken,
@@ -73,18 +87,18 @@ export default function CelticCrossPage() {
         if (!error && data.user) {
           setUser(data.user);
           fetchHistory(data.user.id);
-          // URLからトークンを消去して履歴をクリーンにする
+          fetchNickname(data.user.id);
           const newUrl = window.location.pathname + window.location.hash;
           window.history.replaceState({}, document.title, newUrl);
           return;
         }
       }
 
-      // 2. トークンがない場合は既存のセッションを確認
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
+        fetchNickname(session.user.id);
       }
     };
 
@@ -94,8 +108,10 @@ export default function CelticCrossPage() {
       if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
+        fetchNickname(session.user.id);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
+        setNickname(null);
         setHistory([]);
       }
     });
@@ -144,13 +160,10 @@ export default function CelticCrossPage() {
     }
   };
 
-  // マウントされる前は空の背景だけ返す（エラー回避）
-  if (!mounted) {
-    return <div className="min-h-screen bg-[#0a0a20]" />;
-  }
+  if (!mounted) return <div className="min-h-screen bg-[#0a0a20]" />;
 
   return (
-    <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight">
+    <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight bg-[#0a0a20]">
       <div className="w-full max-w-5xl flex justify-end items-center gap-4 py-4">
         {!user ? (
           <div className="flex items-center gap-3">
@@ -161,7 +174,9 @@ export default function CelticCrossPage() {
           </div>
         ) : (
           <div className="flex items-center gap-4">
-            <span className="text-xs text-indigo-200 opacity-70 font-medium">ようこそ {user.email?.split('@')[0]} さん</span>
+            <span className="text-xs text-indigo-200 opacity-70 font-medium">
+              ようこそ {nickname || user.email?.split('@')[0]} さん
+            </span>
             <button onClick={async () => {
               if (supabase) {
                 await supabase.auth.signOut();
@@ -194,23 +209,23 @@ export default function CelticCrossPage() {
         </div>
       </div>
 
-      {/* デバッグモニター */}
-      <div className="mt-20 p-4 bg-black/80 border border-red-500/50 rounded-lg text-left font-mono text-[10px] w-full max-w-2xl overflow-auto z-[9999]">
-        <h4 className="text-red-500 font-bold mb-2 uppercase">Debug Monitor</h4>
-        <p>【現在ログイン中】: {user ? user.email : '未ログイン (null)'}</p>
-        <p>【Cookie (sb-auth-token)】: {typeof document !== 'undefined' && document.cookie.includes('sb-auth-token') ? '✅ あり' : '❌ なし'}</p>
-        <p>【プロジェクトURL】: {supabaseUrl || '❌ 未設定'}</p>
-        <button 
-          onClick={async () => {
-            if (!supabase) return alert("Supabaseが未初期化です。");
-            const res = await supabase.auth.getUser();
-            alert(JSON.stringify(res, null, 2));
-          }}
-          className="mt-4 px-2 py-1 bg-red-900 text-white rounded hover:bg-red-700 transition-colors"
-        >
-          強制認証テスト
-        </button>
-      </div>
+      <AnimatePresence>
+        {flippedIndices.length === 10 && (
+          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-8 glass border border-indigo-500/30 rounded-3xl max-w-3xl w-full shadow-2xl relative z-20 overflow-hidden mb-20">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent"></div>
+            <h2 className="text-2xl mb-8 text-indigo-200 font-black text-center uppercase tracking-[0.2em]">リーディングをする</h2>
+            {!aiAdvice ? (
+              <div className="text-center py-10">
+                <button onClick={askAI} disabled={loading} className="bg-gradient-to-r from-indigo-800 to-purple-900 px-10 py-4 rounded-xl font-black border border-indigo-400/30 hover:border-indigo-300 transition-all tracking-widest">{loading ? "星々を読み解いています..." : "AIに詳しく相談する"}</button>
+              </div>
+            ) : (
+              <div className="bg-black/30 p-8 rounded-xl border border-white/5 shadow-inner relative">
+                <p className="whitespace-pre-wrap text-left text-indigo-50 font-medium leading-relaxed md:text-lg">{aiAdvice}</p>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
