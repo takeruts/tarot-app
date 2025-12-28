@@ -85,7 +85,7 @@ useEffect(() => {
     return () => subscription.unsubscribe();
   }, []);
 
-  
+
   const fetchHistory = async (userId: string) => {
     if (!supabase) return;
     const { data, error } = await supabase.from('tarot_history').select('*').eq('user_id', userId).order('created_at', { ascending: false });
@@ -94,7 +94,7 @@ useEffect(() => {
 
   const handleLogin = () => {
     // 戻り先URL。ここが tarotai.jp であることを確認
-    const currentUrl = window.location.origin; 
+    const currentUrl = "https://www.tarotai.jp"; 
     window.location.href = `${KACHIPEA_LOGIN_URL}?redirect_to=${encodeURIComponent(currentUrl)}`;
   };
 
