@@ -164,6 +164,7 @@ export default function CelticCrossPage() {
 
   return (
     <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight bg-[#0a0a20]">
+      {/* ログイン・ユーザー情報 */}
       <div className="w-full max-w-5xl flex justify-end items-center gap-4 py-4">
         {!user ? (
           <div className="flex items-center gap-3">
@@ -189,11 +190,13 @@ export default function CelticCrossPage() {
 
       <h1 className="text-4xl md:text-6xl font-black my-12 text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 glow-text tracking-tighter uppercase drop-shadow-[0_0_15px_rgba(99,102,241,0.5)] text-center">タロット占い</h1>
       
+      {/* 入力フォーム */}
       <div className="glass flex flex-col gap-4 mb-16 w-full max-w-md p-6 rounded-2xl glow-blue">
         <input type="text" placeholder="相談したい悩みをここへ..." className="bg-black/40 border border-indigo-500/30 rounded-lg px-4 py-3 text-indigo-100 placeholder:text-indigo-400/50 focus:outline-none focus:border-indigo-400 transition-all font-medium" value={userQuestion} onChange={(e) => setUserQuestion(e.target.value)} />
         <button onClick={startFortune} disabled={loading} className="bg-indigo-700/80 hover:bg-indigo-600 p-4 rounded-xl font-black tracking-widest transition-all active:scale-95 disabled:bg-gray-800 disabled:opacity-50">{loading ? "精神を集中しています..." : "運命のカードを引く"}</button>
       </div>
 
+      {/* カードスプレッド */}
       <div className="relative">
         <AnimatePresence>
           {deck.length === 10 && flippedIndices.length < 10 && (
@@ -209,11 +212,12 @@ export default function CelticCrossPage() {
         </div>
       </div>
 
+      {/* 占い結果表示 */}
       <AnimatePresence>
         {flippedIndices.length === 10 && (
-          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-8 glass border border-indigo-500/30 rounded-3xl max-w-3xl w-full shadow-2xl relative z-20 overflow-hidden mb-20">
+          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-8 glass border border-indigo-500/30 rounded-3xl max-w-3xl w-full shadow-2xl relative z-20 overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent"></div>
-            <h2 className="text-2xl mb-8 text-indigo-200 font-black text-center uppercase tracking-[0.2em]">リーディングをする</h2>
+            <h2 className="text-2xl mb-8 text-indigo-200 font-black text-center uppercase tracking-[0.2em]">リーディング</h2>
             {!aiAdvice ? (
               <div className="text-center py-10">
                 <button onClick={askAI} disabled={loading} className="bg-gradient-to-r from-indigo-800 to-purple-900 px-10 py-4 rounded-xl font-black border border-indigo-400/30 hover:border-indigo-300 transition-all tracking-widest">{loading ? "星々を読み解いています..." : "AIに詳しく相談する"}</button>
@@ -226,6 +230,28 @@ export default function CelticCrossPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 過去の神託 (履歴表示) */}
+      {user && history.length > 0 && (
+        <div className="mt-32 w-full max-w-4xl px-4 pb-20">
+          <h3 className="text-xs font-black text-indigo-400/60 uppercase tracking-[0.3em] mb-8 text-center">過去の神託</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {history.map((item) => (
+              <div key={item.id} className="p-6 rounded-2xl bg-indigo-900/10 border border-indigo-500/10 hover:border-indigo-500/30 transition-all group">
+                <p className="text-[10px] text-indigo-400/50 font-bold mb-2">{new Date(item.created_at).toLocaleDateString()}</p>
+                <h4 className="text-sm font-bold text-indigo-100 mb-3 line-clamp-1 group-hover:text-white transition-colors">Q: {item.question || "無題の相談"}</h4>
+                <p className="text-xs text-indigo-200/60 line-clamp-3 leading-relaxed">{item.advice}</p>
+                <div className="mt-4 flex gap-1 opacity-40 group-hover:opacity-100 transition-opacity overflow-hidden">
+                  {item.cards?.slice(0, 5).map((c: any, i: number) => (
+                    <div key={i} className="w-6 h-10 bg-indigo-500/20 rounded-sm border border-indigo-500/30 flex-shrink-0" />
+                  ))}
+                  {item.cards?.length > 5 && <span className="text-[8px] text-indigo-500/50 flex items-end ml-1">...</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
