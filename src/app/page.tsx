@@ -44,7 +44,7 @@ export default function CelticCrossPage() {
   const [user, setUser] = useState<any>(null);
   const [nickname, setNickname] = useState<string | null>(null);
   const [history, setHistory] = useState<any[]>([]);
-  const [selectedHistory, setSelectedHistory] = useState<any>(null); // モーダル表示用
+  const [selectedHistory, setSelectedHistory] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
 
   const fetchHistory = async (userId: string) => {
@@ -161,8 +161,23 @@ export default function CelticCrossPage() {
         <button onClick={startFortune} disabled={loading} className="bg-indigo-700/80 hover:bg-indigo-600 p-4 rounded-xl font-black tracking-widest transition-all active:scale-95 disabled:opacity-50">{loading ? "精神集中..." : "運命のカードを引く"}</button>
       </div>
 
-      {/* スプレッド */}
+      {/* スプレッド & ガイド表示 */}
       <div className="relative">
+        <AnimatePresence>
+          {deck.length === 10 && flippedIndices.length < 10 && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              exit={{ opacity: 0 }} 
+              className="absolute -top-16 left-0 right-0 text-center z-20"
+            >
+              <p className="text-indigo-300 font-bold tracking-widest text-sm animate-pulse">
+                カードを１枚ずつクリックして、めくってください
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="grid grid-cols-4 grid-rows-4 gap-4 md:gap-8 w-fit mx-auto relative z-10">
           {deck.length === 10 && deck.map((card, i) => (
             <TarotCard key={card.id + i} card={card} index={i} isFlipped={flippedIndices.includes(i)} onFlip={(idx: number) => { if (!flippedIndices.includes(idx)) setFlippedIndices([...flippedIndices, idx]); }} />
@@ -234,7 +249,6 @@ export default function CelticCrossPage() {
               </div>
               
               <div className="grid md:grid-cols-[1fr_2fr] gap-8">
-                {/* 履歴内のカード表示 */}
                 <div className="flex flex-wrap gap-2 justify-center content-start">
                   {selectedHistory.cards?.map((card: any, i: number) => (
                     <div key={i} className="w-16 h-28 md:w-20 md:h-32 relative rounded-md overflow-hidden border border-indigo-500/20 shadow-lg">
@@ -242,7 +256,6 @@ export default function CelticCrossPage() {
                     </div>
                   ))}
                 </div>
-                {/* 履歴内のアドバイス表示 */}
                 <div className="bg-indigo-500/5 p-6 rounded-2xl border border-indigo-500/10">
                   <h3 className="text-xs font-black text-indigo-400 mb-4 uppercase tracking-widest underline decoration-indigo-500/30 underline-offset-8">神託の結果</h3>
                   <p className="text-indigo-50 leading-relaxed whitespace-pre-wrap text-sm md:text-base">{selectedHistory.advice}</p>
