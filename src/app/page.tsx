@@ -7,8 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// エラーの原因となった cookieOptions を削除しました。
-// storageKey さえ一致していれば、SDKは自動的に .tarotai.jp の Cookie を読みに行きます。
+// storageKey を指定して Cookie を自動検知させる
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
@@ -48,7 +47,7 @@ export default function CelticCrossPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [selectedHistory, setSelectedHistory] = useState<any>(null);
 
-  // fetchHistory を useEffect より前に定義することで「Cannot find name 'fetchHistory'」を回避
+  // 定義順エラーを避けるため fetchHistory を先に記述
   const fetchHistory = async (userId: string) => {
     if (!supabase) return;
     const { data, error } = await supabase.from('tarot_history').select('*').eq('user_id', userId).order('created_at', { ascending: false });
@@ -229,6 +228,27 @@ export default function CelticCrossPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* --- ここからデバッグパネル --- */}
+      <div className="mt-20 p-4 bg-black/80 border border-red-500/50 rounded-lg text-left font-mono text-[10px] w-full max-w-2xl overflow-auto z-[9999]">
+        <h4 className="text-red-500 font-bold mb-2 uppercase">Debug Monitor</h4>
+        <p>【現在ログイン中】: {user ? user.email : '未ログイン (null)'}</p>
+        <p>【Cookie (sb-auth-token)】: {typeof document !== 'undefined' && document.cookie.includes('sb-auth-token') ? '✅ あり' : '❌ なし'}</p>
+        <p>【Supabase 初期化】: {supabase ? '✅ 完了' : '❌ 未完了'}</p>
+        <p>【プロジェクトURL】: {process.env.NEXT_PUBLIC_SUPABASE_URL || '❌ 未設定'}</p>
+        
+        <button 
+          onClick={async () => {
+            if (!supabase) return alert("Supabaseが未初期化です");
+            const { data, error } = await supabase.auth.getUser();
+            alert(JSON.stringify({ data, error }, null, 2));
+          }}
+          className="mt-4 px-2 py-1 bg-red-900 text-white rounded hover:bg-red-700 transition-colors"
+        >
+          強制認証テスト (Alert表示)
+        </button>
+      </div>
+      {/* --- ここまでデバッグパネル --- */}
     </div>
   );
 }
