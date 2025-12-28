@@ -58,19 +58,33 @@ export default function CelticCrossPage() {
     if (!supabase) return;
 
     const initAuth = async () => {
+      // 1. URLパラメータからトークンを取得
+      const params = new URLSearchParams(window.location.search);
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+
+      if (accessToken && refreshToken) {
+        // トークンがある場合はセッションをセット
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+
+        if (!error && data.user) {
+          setUser(data.user);
+          fetchHistory(data.user.id);
+          // URLからトークンを消去して履歴をクリーンにする
+          const newUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState({}, document.title, newUrl);
+          return;
+        }
+      }
+
+      // 2. トークンがない場合は既存のセッションを確認
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
-      } else {
-        const hasCookie = document.cookie.includes('sb-auth-token');
-        if (hasCookie) {
-          const { data: { user: cookieUser } } = await supabase.auth.getUser();
-          if (cookieUser) {
-            setUser(cookieUser);
-            fetchHistory(cookieUser.id);
-          }
-        }
       }
     };
 
@@ -151,7 +165,6 @@ export default function CelticCrossPage() {
             <button onClick={async () => {
               if (supabase) {
                 await supabase.auth.signOut();
-                document.cookie = "sb-auth-token=; path=/; domain=.tarotai.jp; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                 window.location.reload();
               }
             }} className="text-[10px] text-indigo-400/50 hover:text-indigo-300 uppercase font-bold tracking-tighter">Logout</button>
