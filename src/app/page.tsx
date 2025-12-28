@@ -7,13 +7,14 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// ビルドエラーの原因となった cookieOptions を削除し、標準的な構成に戻します
+// エラーの原因となった cookieOptions を削除しました。
+// storageKey さえ一致していれば、SDKは自動的に .tarotai.jp の Cookie を読みに行きます。
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    storageKey: 'sb-auth-token', // ここを画像と一致させておくことが重要です
+    storageKey: 'sb-auth-token', 
   }
 }) : null;
 
@@ -47,7 +48,7 @@ export default function CelticCrossPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [selectedHistory, setSelectedHistory] = useState<any>(null);
 
-  // 定義順エラーを避けるため fetchHistory を先に記述
+  // fetchHistory を useEffect より前に定義することで「Cannot find name 'fetchHistory'」を回避
   const fetchHistory = async (userId: string) => {
     if (!supabase) return;
     const { data, error } = await supabase.from('tarot_history').select('*').eq('user_id', userId).order('created_at', { ascending: false });
@@ -58,14 +59,14 @@ export default function CelticCrossPage() {
     if (!supabase) return;
 
     const initAuth = async () => {
-      // getSession は storageKey に基づいて自動的にブラウザのCookieを探します
+      // 既存セッションの取得
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
       } else {
-        // SDKがCookieを自動で見つけられない場合、getUser でサーバーと直接照合
+        // SDKが自動で見つけられない場合、直接認証サーバーへ確認
         const hasCookie = document.cookie.includes('sb-auth-token');
         if (hasCookie) {
           const { data: { user: cookieUser } } = await supabase.auth.getUser();
@@ -149,7 +150,6 @@ export default function CelticCrossPage() {
             <button onClick={async () => {
               if (supabase) {
                 await supabase.auth.signOut();
-                // 確実にCookieを掃除してリロード
                 document.cookie = "sb-auth-token=; path=/; domain=.tarotai.jp; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                 window.location.reload();
               }
