@@ -43,6 +43,8 @@ export default function CelticCrossPage() {
   const [userQuestion, setUserQuestion] = useState("");
   const [user, setUser] = useState<any>(null);
   const [nickname, setNickname] = useState<string | null>(null);
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const [newNickname, setNewNickname] = useState("");
   const [history, setHistory] = useState<any[]>([]);
   const [selectedHistory, setSelectedHistory] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
@@ -64,7 +66,26 @@ export default function CelticCrossPage() {
       .select('nickname')
       .eq('id', userId)
       .single();
-    if (data) setNickname(data.nickname);
+    if (data) {
+      setNickname(data.nickname);
+      setNewNickname(data.nickname);
+    }
+  };
+
+  const updateNickname = async () => {
+    if (!supabase || !user || !newNickname.trim()) return;
+    setLoading(true);
+    const { error } = await supabase
+      .from('value_profiles')
+      .upsert({ id: user.id, nickname: newNickname.trim(), updated_at: new Date() });
+    
+    if (error) {
+      alert("ニックネームの更新に失敗しました。");
+    } else {
+      setNickname(newNickname.trim());
+      setIsEditingNickname(false);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -78,32 +99,27 @@ export default function CelticCrossPage() {
 
       let currentUser = null;
 
-      // 1. URLトークンがある場合はセッションをセット
       if (accessToken && refreshToken) {
-        const { data, error } = await supabase.auth.setSession({ 
+        const { data } = await supabase.auth.setSession({ 
           access_token: accessToken, 
           refresh_token: refreshToken 
         });
         if (data?.user) {
           currentUser = data.user;
-          // URLパラメータを掃除
           window.history.replaceState({}, document.title, window.location.pathname);
         }
       }
 
-      // 2. トークンがなかった場合、またはセットに失敗した場合は既存セッションを確認
       if (!currentUser) {
         const { data: { user: verifiedUser } } = await supabase.auth.getUser();
         currentUser = verifiedUser;
       }
 
-      // 3. ユーザーが確定した場合のみデータをロード
       if (currentUser) {
         setUser(currentUser);
         fetchHistory(currentUser.id);
         fetchNickname(currentUser.id);
       } else {
-        // 未ログイン状態の初期化
         setUser(null);
         setNickname(null);
         setHistory([]);
@@ -112,7 +128,6 @@ export default function CelticCrossPage() {
 
     initAuth();
 
-    // 認証状態の変化を監視（SIGNED_IN, SIGNED_OUTなど）
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
         setUser(session.user);
@@ -178,9 +193,34 @@ export default function CelticCrossPage() {
             <button onClick={handleLogin} className="px-5 py-2 rounded-full bg-indigo-600/40 border border-indigo-400/30 text-xs hover:bg-indigo-500/60 transition-all font-bold">ログイン</button>
           </div>
         ) : (
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-indigo-200 opacity-70">ようこそ {nickname || user.email?.split('@')[0]} さん</span>
-            <button onClick={() => supabase?.auth.signOut().then(() => window.location.reload())} className="text-[10px] text-indigo-400/50 hover:text-indigo-300 uppercase font-bold">Logout</button>
+          <div className="flex items-center gap-4 bg-indigo-950/30 px-4 py-2 rounded-2xl border border-indigo-500/10">
+            {isEditingNickname ? (
+              <div className="flex items-center gap-2">
+                <input 
+                  type="text" 
+                  className="bg-black/50 border border-indigo-500/50 rounded px-2 py-1 text-xs outline-none w-32"
+                  value={newNickname}
+                  onChange={(e) => setNewNickname(e.target.value)}
+                  autoFocus
+                />
+                <button onClick={updateNickname} disabled={loading} className="text-[10px] text-emerald-400 font-bold uppercase">Save</button>
+                <button onClick={() => setIsEditingNickname(false)} className="text-[10px] text-gray-500 font-bold uppercase">Cancel</button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <span 
+                  className="text-xs text-indigo-200 opacity-70 cursor-pointer hover:text-indigo-400 transition-colors flex items-center gap-2"
+                  onClick={() => setIsEditingNickname(true)}
+                >
+                  ようこそ {nickname || user.email?.split('@')[0]} さん
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </span>
+                <div className="w-[1px] h-3 bg-indigo-500/20" />
+                <button onClick={() => supabase?.auth.signOut().then(() => window.location.reload())} className="text-[10px] text-indigo-400/50 hover:text-indigo-300 uppercase font-bold">Logout</button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -193,7 +233,7 @@ export default function CelticCrossPage() {
         <button onClick={startFortune} disabled={loading} className="bg-indigo-700/80 hover:bg-indigo-600 p-4 rounded-xl font-black tracking-widest transition-all active:scale-95 disabled:opacity-50">{loading ? "精神集中..." : "運命のカードを引く"}</button>
       </div>
 
-      {/* スプレッド */}
+      {/* スプレッド（カード表示部分） */}
       <div className="relative">
         <AnimatePresence>
           {deck.length === 10 && flippedIndices.length < 10 && (
