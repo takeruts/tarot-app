@@ -1,60 +1,76 @@
-# Celtic Cross Tarot & Kachipi Auth System
+# AI Tarot - Inner Clarity (ケルティッククロス)
 
-このプロジェクトは、Supabaseをバックエンドとして共有し、認証 IdP（カチピ）と占いアプリ（タロット占い）を連携させたマルチドメイン・エコシステムです。
+AIを活用した本格的なタロット占いアプリです。「当てる」こと以上に、**「カードの象徴を通して自分の内面を整理する」**という対話的な体験を重視して開発されています。
 
-## 🛠️ 技術スタック
+## 🔮 特徴
 
-* **Frontend**: Next.js (App Router), Tailwind CSS, Framer Motion
-* **Backend/Auth**: Supabase (Auth, PostgreSQL, RLS)
-* **AI**: OpenAI API (占いアドバイス生成)
-* **Infrastructure**: Vercel (Hosting)
+* **本格ケルティッククロス・スプレッド**: 10枚のカードを展開し、多角的な視点から現状を分析。
+* **AIリーディング**: 最新のAIが展開されたカードの象徴を読み解き、ユーザーの悩みに寄り添った神託を提供。
+* **一元管理（SSO）基盤**: 認証基盤「Kachipi」と連携し、複数アプリ間でプロフィール（ニックネーム等）やセッションをシームレスに同期。
+* **履歴管理**: 過去の神託結果をデータベースに保存。いつでも自分の心の変化を振り返ることが可能。
+* **SEO & OGP最適化**: 構造化データ（JSON-LD）の実装により、検索エンジンにも最適化。
 
-## 🔐 認証アーキテクチャ (トークン受け流し方式)
+## 🛠 技術スタック
 
-通常の共有クッキー（SameSite=Lax/Domain属性）に依存せず、ブラウザのセキュリティ制限を回避する**トークン受け渡し方式**を採用しています。
+| カテゴリ | 技術 |
+| --- | --- |
+| **Frontend** | [Next.js](https://nextjs.org/) (App Router), [Framer Motion](https://www.framer.com/motion/) |
+| **Backend / Auth** | [Supabase](https://supabase.com/) (PostgreSQL, Auth, RLS) |
+| **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
+| **AI Integration** | OpenAI API / Google Gemini API (via Edge Runtime) |
 
-1. **認証のリクエスト**: アプリ側 (`tarotai.jp`) からログインボタン押下時、`redirect_to` パラメータを付与してカチピ (`kachi.tarotai.jp`) へ遷移。
-2. **プロバイダー認証**: カチピ側でメール/パスワードまたは Google OAuth を使用して認証。
-3. **セッション交換とリダイレクト**: カチピの `auth/callback` サーバー側で認証コードをセッションに変換。
-4. **トークンの付与**: リダイレクト先が `tarotai.jp` の場合、URL パラメータに `access_token` と `refresh_token` を付与してリダイレクト。
-5. **アプリ側での復元**: アプリ側の `useEffect` が URL からトークンを検知し、`supabase.auth.setSession()` でログイン状態を確立。
+## 🚀 導入方法
 
-## 🃏 タロット占いアプリの機能
-
-* **ケルト十字スプレッド**: 10枚のカードを配置し、過去・現在・未来・潜在意識などを多角的に鑑定。
-* **インタラクティブUI**:
-* 「カードを１枚ずつクリックして、めくってください」という動的ガイド表示。
-* ガラス質感（Glassmorphism）を採用したサイバーパンクなデザイン。
-
-
-* **AIアドバイス**: OpenAIを活用し、引いたカードの組み合わせから具体的な助言を生成。
-* **過去の神託 (履歴管理)**:
-* ログインユーザーの過去の鑑定結果をデータベースに保存。
-* **コンパクト表示**: 履歴リストはカード型で省スペースに表示。
-* **詳細モーダル**: クリックで鑑定内容、質問、引いたカードの画像を拡大表示。
-
-
-
-## 👤 認証・データ連携 (カチピ側)
-
-* **匿名データのマージ**: ログイン前に作成された匿名投稿（`anonymous_id` ベース）を、ログイン成功時に自動でユーザーIDへ紐付け。
-* **プロフィール共有**: `value_profiles` テーブルから取得したニックネームをヘッダーに優先表示。
-* **Googleログイン**: Google OAuth 2.0 プロバイダーに対応。
-
-## ⚙️ 環境変数 (Environment Variables)
-
-両方のプロジェクトの Vercel 設定で以下の変数を設定してください。
+### 1. リポジトリのクローン
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key (カチピ側のみ必須)
+git clone https://github.com/your-username/tarot-ai-app.git
+cd tarot-ai-app
 
 ```
 
-## 📂 主要ディレクトリ
+### 2. 依存関係のインストール
 
-* `/app/page.tsx`: 占いメインロジック & トークン受け取り
-* `/app/auth/callback/route.ts`: サーバーサイド認証 & トークン付与リダイレクト
+```bash
+npm install
+
+```
+
+### 3. 環境変数の設定
+
+`.env.local` ファイルを作成し、以下の項目を設定してください。
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+# AI用APIキーなどはAPIルート側で設定
+
+```
+
+### 4. 開発サーバーの起動
+
+```bash
+npm run dev
+
+```
+
+## 📂 データベース構成
+
+本アプリは以下のテーブル構成（Supabase）を前提としています。
+
+* **`value_profiles`**: ユーザー共通プロフィール（ニックネーム管理）
+* **`tarot_history`**: 占いの履歴（相談内容、展開カード、AIのアドバイス）
+
+## 🎨 デザインコンセプト
+
+「未来的な神秘性（Futuristic Mysticism）」をテーマに、ダークモードを基調としたインディゴカラーとガラスモーフィズム（Glassmorphism）を採用。ユーザーが深い思考に沈めるような静かなUIを目指しています。
+
+## 📝 開発コンセプト
+
+> タロットは、自分の内面を整理するのにとても有効な手段です。
+> 各々のカードが象徴する観点を通して、自分の悩みや考えを見直すことで、今までとは違う視点で自分の内面を整理することができます。
 
 ---
+
+Copyright (c) 2025 **Kachipea Identity Central**
+

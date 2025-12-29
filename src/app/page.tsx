@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@supabase/supabase-js';
+import Head from 'next/head';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -48,6 +49,15 @@ export default function CelticCrossPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [selectedHistory, setSelectedHistory] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AIタロット占い - 内面を整理する神託",
+    "description": "タロットを通して自分の内面を整理しましょう。AIがケルティッククロス・スプレッドで悩みや考えを深く読み解きます。",
+    "applicationCategory": "EntertainmentApplication",
+    "operatingSystem": "All"
+  };
 
   const fetchHistory = async (userId: string) => {
     if (!supabase) return;
@@ -184,138 +194,164 @@ export default function CelticCrossPage() {
   if (!mounted) return <div className="min-h-screen bg-[#0a0a20]" />;
 
   return (
-    <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight bg-[#0a0a20]">
-      {/* ヘッダー */}
-      <div className="w-full max-w-5xl flex justify-end items-center gap-4 py-4">
-        {!user ? (
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] md:text-xs text-indigo-300/60 font-medium tracking-wider bg-indigo-500/5 px-4 py-2 rounded-full border border-indigo-500/10">結果を保存できます</span>
-            <button onClick={handleLogin} className="px-5 py-2 rounded-full bg-indigo-600/40 border border-indigo-400/30 text-xs hover:bg-indigo-500/60 transition-all font-bold">ログイン</button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-4 bg-indigo-950/30 px-4 py-2 rounded-2xl border border-indigo-500/10">
-            {isEditingNickname ? (
-              <div className="flex items-center gap-2">
-                <input 
-                  type="text" 
-                  className="bg-black/50 border border-indigo-500/50 rounded px-2 py-1 text-xs outline-none w-32"
-                  value={newNickname}
-                  onChange={(e) => setNewNickname(e.target.value)}
-                  autoFocus
-                />
-                <button onClick={updateNickname} disabled={loading} className="text-[10px] text-emerald-400 font-bold uppercase">Save</button>
-                <button onClick={() => setIsEditingNickname(false)} className="text-[10px] text-gray-500 font-bold uppercase">Cancel</button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <span 
-                  className="text-xs text-indigo-200 opacity-70 cursor-pointer hover:text-indigo-400 transition-colors flex items-center gap-2"
-                  onClick={() => setIsEditingNickname(true)}
-                >
-                  ようこそ {nickname || user.email?.split('@')[0]} さん
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                  </svg>
-                </span>
-                <div className="w-[1px] h-3 bg-indigo-500/20" />
-                <button onClick={() => supabase?.auth.signOut().then(() => window.location.reload())} className="text-[10px] text-indigo-400/50 hover:text-indigo-300 uppercase font-bold">Logout</button>
-              </div>
+    <>
+      <Head>
+        <title>AIタロット占い | 自分の内面を整理する対話の場</title>
+        <meta name="description" content="タロットは内面を整理する有効な手段です。AIがケルティッククロスであなたの悩みを見直し、新しい視点を提供します。" />
+        <meta name="keywords" content="タロット占い, AI占い, 内面整理, 自己対話, 悩み相談, ケルティッククロス" />
+        <link rel="canonical" href="https://www.tarotai.jp" />
+        <meta property="og:title" content="AIタロット占い | 内面を整理する神託" />
+        <meta property="og:description" content="自分の悩みや考えをカードを通して見直し、新しい視点で自分を整理しましょう。" />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLd)}
+        </script>
+      </Head>
+
+      <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight bg-[#0a0a20]">
+        {/* ヘッダー */}
+        <div className="w-full max-w-5xl flex justify-end items-center gap-4 py-4">
+          {!user ? (
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] md:text-xs text-indigo-300/60 font-medium tracking-wider bg-indigo-500/5 px-4 py-2 rounded-full border border-indigo-500/10">結果を保存できます</span>
+              <button onClick={handleLogin} className="px-5 py-2 rounded-full bg-indigo-600/40 border border-indigo-400/30 text-xs hover:bg-indigo-500/60 transition-all font-bold">ログイン</button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4 bg-indigo-950/30 px-4 py-2 rounded-2xl border border-indigo-500/10">
+              {isEditingNickname ? (
+                <div className="flex items-center gap-2">
+                  <input 
+                    type="text" 
+                    className="bg-black/50 border border-indigo-500/50 rounded px-2 py-1 text-xs outline-none w-32"
+                    value={newNickname}
+                    onChange={(e) => setNewNickname(e.target.value)}
+                    autoFocus
+                  />
+                  <button onClick={updateNickname} disabled={loading} className="text-[10px] text-emerald-400 font-bold uppercase">Save</button>
+                  <button onClick={() => setIsEditingNickname(false)} className="text-[10px] text-gray-500 font-bold uppercase">Cancel</button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <span 
+                    className="text-xs text-indigo-200 opacity-70 cursor-pointer hover:text-indigo-400 transition-colors flex items-center gap-2"
+                    onClick={() => setIsEditingNickname(true)}
+                  >
+                    ようこそ {nickname || user.email?.split('@')[0]} さん
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </span>
+                  <div className="w-[1px] h-3 bg-indigo-500/20" />
+                  <button onClick={() => supabase?.auth.signOut().then(() => window.location.reload())} className="text-[10px] text-indigo-400/50 hover:text-indigo-300 uppercase font-bold">Logout</button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <h1 className="text-4xl md:text-6xl font-black mt-12 mb-6 text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 text-center uppercase">タロット占い</h1>
+        
+        {/* 追加した説明文 */}
+        <div className="max-w-2xl w-full text-center mb-12 space-y-4 px-6">
+          <p className="text-sm md:text-base text-indigo-200/80 leading-relaxed font-medium">
+            タロットは、各々のカードが象徴する観点を通し、自分の悩みや考えを見直し、<br className="hidden md:block" />
+            今までとは違う視点で自分の内面を整理することができます。
+          </p>
+          <p className="text-sm md:text-base text-indigo-300 font-bold tracking-wide">
+            こちらに悩みを記入して、内面を整理しましょう。
+          </p>
+        </div>
+
+        {/* フォーム */}
+        <div className="glass flex flex-col gap-4 mb-16 w-full max-w-md p-6 rounded-2xl glow-blue">
+          <input type="text" placeholder="相談したい悩みをここへ..." className="bg-black/40 border border-indigo-500/30 rounded-lg px-4 py-3 text-indigo-100 focus:outline-none focus:border-indigo-400 transition-all" value={userQuestion} onChange={(e) => setUserQuestion(e.target.value)} />
+          <button onClick={startFortune} disabled={loading} className="bg-indigo-700/80 hover:bg-indigo-600 p-4 rounded-xl font-black tracking-widest transition-all active:scale-95 disabled:opacity-50">{loading ? "精神集中..." : "運命のカードを引く"}</button>
+        </div>
+
+        {/* スプレッド */}
+        <div className="relative">
+          <AnimatePresence>
+            {deck.length === 10 && flippedIndices.length < 10 && (
+              <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute -top-16 left-0 right-0 text-center z-20">
+                <p className="text-indigo-300 font-bold tracking-widest text-sm animate-pulse">カードを１枚ずつクリックして、めくってください</p>
+              </motion.div>
             )}
+          </AnimatePresence>
+
+          <div className="grid grid-cols-4 grid-rows-4 gap-4 md:gap-8 w-fit mx-auto relative z-10">
+            {deck.length === 10 && deck.map((card, i) => (
+              <TarotCard key={card.id + i} card={card} index={i} isFlipped={flippedIndices.includes(i)} onFlip={(idx: number) => { if (!flippedIndices.includes(idx)) setFlippedIndices([...flippedIndices, idx]); }} />
+            ))}
           </div>
-        )}
-      </div>
+        </div>
 
-      <h1 className="text-4xl md:text-6xl font-black my-12 text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 text-center uppercase">タロット占い</h1>
-      
-      {/* フォーム */}
-      <div className="glass flex flex-col gap-4 mb-16 w-full max-w-md p-6 rounded-2xl glow-blue">
-        <input type="text" placeholder="相談したい悩みをここへ..." className="bg-black/40 border border-indigo-500/30 rounded-lg px-4 py-3 text-indigo-100 focus:outline-none focus:border-indigo-400 transition-all" value={userQuestion} onChange={(e) => setUserQuestion(e.target.value)} />
-        <button onClick={startFortune} disabled={loading} className="bg-indigo-700/80 hover:bg-indigo-600 p-4 rounded-xl font-black tracking-widest transition-all active:scale-95 disabled:opacity-50">{loading ? "精神集中..." : "運命のカードを引く"}</button>
-      </div>
-
-      {/* スプレッド（カード表示部分） */}
-      <div className="relative">
+        {/* 結果表示 */}
         <AnimatePresence>
-          {deck.length === 10 && flippedIndices.length < 10 && (
-            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute -top-16 left-0 right-0 text-center z-20">
-              <p className="text-indigo-300 font-bold tracking-widest text-sm animate-pulse">カードを１枚ずつクリックして、めくってください</p>
+          {flippedIndices.length === 10 && (
+            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-8 glass border border-indigo-500/30 rounded-3xl max-w-3xl w-full shadow-2xl relative z-20 overflow-hidden mb-10">
+              <h2 className="text-2xl mb-8 text-indigo-200 font-black text-center uppercase tracking-widest">リーディング</h2>
+              {!aiAdvice ? (
+                <div className="text-center py-10">
+                  <button onClick={askAI} disabled={loading} className="bg-gradient-to-r from-indigo-800 to-purple-900 px-10 py-4 rounded-xl font-black tracking-widest">{loading ? "星々を読み解いています..." : "AIに詳しく相談する"}</button>
+                </div>
+              ) : (
+                <div className="bg-black/30 p-8 rounded-xl border border-white/5 relative">
+                  <p className="whitespace-pre-wrap text-left text-indigo-50 font-medium leading-relaxed md:text-lg">{aiAdvice}</p>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="grid grid-cols-4 grid-rows-4 gap-4 md:gap-8 w-fit mx-auto relative z-10">
-          {deck.length === 10 && deck.map((card, i) => (
-            <TarotCard key={card.id + i} card={card} index={i} isFlipped={flippedIndices.includes(i)} onFlip={(idx: number) => { if (!flippedIndices.includes(idx)) setFlippedIndices([...flippedIndices, idx]); }} />
-          ))}
-        </div>
-      </div>
-
-      {/* 結果表示 */}
-      <AnimatePresence>
-        {flippedIndices.length === 10 && (
-          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-8 glass border border-indigo-500/30 rounded-3xl max-w-3xl w-full shadow-2xl relative z-20 overflow-hidden mb-10">
-            <h2 className="text-2xl mb-8 text-indigo-200 font-black text-center uppercase tracking-widest">リーディング</h2>
-            {!aiAdvice ? (
-              <div className="text-center py-10">
-                <button onClick={askAI} disabled={loading} className="bg-gradient-to-r from-indigo-800 to-purple-900 px-10 py-4 rounded-xl font-black tracking-widest">{loading ? "星々を読み解いています..." : "AIに詳しく相談する"}</button>
-              </div>
-            ) : (
-              <div className="bg-black/30 p-8 rounded-xl border border-white/5 relative">
-                <p className="whitespace-pre-wrap text-left text-indigo-50 font-medium leading-relaxed md:text-lg">{aiAdvice}</p>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* 過去の履歴 */}
-      {user && history.length > 0 && (
-        <div className="mt-20 w-full max-w-5xl px-4 pb-32">
-          <h3 className="text-xs font-black text-indigo-400/60 uppercase tracking-[0.3em] mb-8 text-center">過去の神託</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {history.map((item) => (
-              <motion.div key={item.id} whileHover={{ scale: 1.05 }} onClick={() => setSelectedHistory(item)} className="cursor-pointer p-4 rounded-xl bg-indigo-900/20 border border-indigo-500/10 hover:border-indigo-500/40 transition-all flex flex-col aspect-[3/4] justify-between relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-indigo-900/40 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div>
-                  <p className="text-[9px] text-indigo-400/60 font-bold mb-1">{new Date(item.created_at).toLocaleDateString()}</p>
-                  <h4 className="text-[11px] font-bold text-indigo-100 line-clamp-2 leading-tight uppercase">{item.question || "無題"}</h4>
-                </div>
-                <div className="text-[9px] text-indigo-300/40 self-end font-black italic">READ MORE</div>
-              </motion.div>
-            ))}
+        {/* 過去の履歴 */}
+        {user && history.length > 0 && (
+          <div className="mt-20 w-full max-w-5xl px-4 pb-32">
+            <h3 className="text-xs font-black text-indigo-400/60 uppercase tracking-[0.3em] mb-8 text-center">過去の神託</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {history.map((item) => (
+                <motion.div key={item.id} whileHover={{ scale: 1.05 }} onClick={() => setSelectedHistory(item)} className="cursor-pointer p-4 rounded-xl bg-indigo-900/20 border border-indigo-500/10 hover:border-indigo-500/40 transition-all flex flex-col aspect-[3/4] justify-between relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-indigo-900/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div>
+                    <p className="text-[9px] text-indigo-400/60 font-bold mb-1">{new Date(item.created_at).toLocaleDateString()}</p>
+                    <h4 className="text-[11px] font-bold text-indigo-100 line-clamp-2 leading-tight uppercase">{item.question || "無題"}</h4>
+                  </div>
+                  <div className="text-[9px] text-indigo-300/40 self-end font-black italic">READ MORE</div>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* 詳細モーダル */}
-      <AnimatePresence>
-        {selectedHistory && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setSelectedHistory(null)}>
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="bg-[#0f0f2d] border border-indigo-500/30 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 md:p-10 shadow-[0_0_50px_rgba(79,70,229,0.2)]" onClick={(e) => e.stopPropagation()}>
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <p className="text-xs text-indigo-400 font-bold mb-2 uppercase tracking-widest">{new Date(selectedHistory.created_at).toLocaleString()}</p>
-                  <h2 className="text-xl md:text-2xl font-black text-indigo-100">Q: {selectedHistory.question || "無題の相談"}</h2>
-                </div>
-                <button onClick={() => setSelectedHistory(null)} className="text-indigo-400 hover:text-white p-2 text-2xl">✕</button>
-              </div>
-              <div className="grid md:grid-cols-[1fr_2fr] gap-8">
-                <div className="flex flex-wrap gap-2 justify-center content-start">
-                  {selectedHistory.cards?.map((card: any, i: number) => (
-                    <div key={i} className="w-16 h-28 md:w-20 md:h-32 relative rounded-md overflow-hidden border border-indigo-500/20 shadow-lg">
-                      <img src={card.image_url?.replace('/public', '')} className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180' : ''}`} alt={card.name} />
-                    </div>
-                  ))}
-                </div>
-                <div className="bg-indigo-500/5 p-6 rounded-2xl border border-indigo-500/10">
-                  <h3 className="text-xs font-black text-indigo-400 mb-4 uppercase tracking-widest underline decoration-indigo-500/30 underline-offset-8">神託の結果</h3>
-                  <p className="text-indigo-50 leading-relaxed whitespace-pre-wrap text-sm md:text-base">{selectedHistory.advice}</p>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
         )}
-      </AnimatePresence>
-    </div>
+
+        {/* 詳細モーダル */}
+        <AnimatePresence>
+          {selectedHistory && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setSelectedHistory(null)}>
+              <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="bg-[#0f0f2d] border border-indigo-500/30 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 md:p-10 shadow-[0_0_50px_rgba(79,70,229,0.2)]" onClick={(e) => e.stopPropagation()}>
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <p className="text-xs text-indigo-400 font-bold mb-2 uppercase tracking-widest">{new Date(selectedHistory.created_at).toLocaleString()}</p>
+                    <h2 className="text-xl md:text-2xl font-black text-indigo-100">Q: {selectedHistory.question || "無題の相談"}</h2>
+                  </div>
+                  <button onClick={() => setSelectedHistory(null)} className="text-indigo-400 hover:text-white p-2 text-2xl">✕</button>
+                </div>
+                <div className="grid md:grid-cols-[1fr_2fr] gap-8">
+                  <div className="flex flex-wrap gap-2 justify-center content-start">
+                    {selectedHistory.cards?.map((card: any, i: number) => (
+                      <div key={i} className="w-16 h-28 md:w-20 md:h-32 relative rounded-md overflow-hidden border border-indigo-500/20 shadow-lg">
+                        <img src={card.image_url?.replace('/public', '')} className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180' : ''}`} alt={card.name} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-indigo-500/5 p-6 rounded-2xl border border-indigo-500/10">
+                    <h3 className="text-xs font-black text-indigo-400 mb-4 uppercase tracking-widest underline decoration-indigo-500/30 underline-offset-8">神託の結果</h3>
+                    <p className="text-indigo-50 leading-relaxed whitespace-pre-wrap text-sm md:text-base">{selectedHistory.advice}</p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
