@@ -15,7 +15,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
   }
 }) : null;
 
-const KACHIPEA_LOGIN_URL = "https://kachi.tarotai.jp/login"; 
+const KACHIPEA_LOGIN_URL = "https://www.kachi.tarotai.jp/login"; 
 
 const TarotCard = ({ card, index, isFlipped, onFlip }: any) => {
   if (!card) return <div className="w-24 h-40 md:w-32 md:h-52 bg-indigo-900/20 rounded-lg animate-pulse border border-indigo-500/30" />;
@@ -76,52 +76,48 @@ export default function CelticCrossPage() {
       const accessToken = params.get('access_token');
       const refreshToken = params.get('refresh_token');
 
-      // 1. トークンがある場合はセッションをセット
+      let currentUser = null;
+
+      // 1. URLトークンがある場合はセッションをセット
       if (accessToken && refreshToken) {
-        const { data } = await supabase.auth.setSession({ 
+        const { data, error } = await supabase.auth.setSession({ 
           access_token: accessToken, 
           refresh_token: refreshToken 
         });
-        if (data.user) {
+        if (data?.user) {
+          currentUser = data.user;
+          // URLパラメータを掃除
           window.history.replaceState({}, document.title, window.location.pathname);
         }
       }
 
-      // 2. 厳密な実在確認 (getUser)
-      // これにより、DBで消されたユーザーはここでエラーになり、下の処理に進めません
-      const { data: { user: verifiedUser }, error } = await supabase.auth.getUser();
+      // 2. トークンがなかった場合、またはセットに失敗した場合は既存セッションを確認
+      if (!currentUser) {
+        const { data: { user: verifiedUser } } = await supabase.auth.getUser();
+        currentUser = verifiedUser;
+      }
 
-      if (error || !verifiedUser) {
-        // ユーザーが消されている、または未ログインの場合
+      // 3. ユーザーが確定した場合のみデータをロード
+      if (currentUser) {
+        setUser(currentUser);
+        fetchHistory(currentUser.id);
+        fetchNickname(currentUser.id);
+      } else {
+        // 未ログイン状態の初期化
         setUser(null);
         setNickname(null);
         setHistory([]);
-        // 古いトークンが残っていれば掃除
-        if (!error?.message.includes("Auth session missing")) {
-            await supabase.auth.signOut();
-        }
-        return;
       }
-
-      // 3. 実在が確認できた場合のみデータをロード
-      setUser(verifiedUser);
-      fetchHistory(verifiedUser.id);
-      fetchNickname(verifiedUser.id);
     };
 
     initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    // 認証状態の変化を監視（SIGNED_IN, SIGNED_OUTなど）
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
-        // イベント発生時も getUser で実在確認を挟むのがより安全
-        const { data: { user: vUser } } = await supabase.auth.getUser();
-        if (vUser) {
-          setUser(vUser);
-          fetchHistory(vUser.id);
-          fetchNickname(vUser.id);
-        } else {
-          setUser(null);
-        }
+        setUser(session.user);
+        fetchHistory(session.user.id);
+        fetchNickname(session.user.id);
       } else if (event === 'SIGNED_OUT') {
         setUser(null); 
         setNickname(null); 
@@ -174,6 +170,7 @@ export default function CelticCrossPage() {
 
   return (
     <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight bg-[#0a0a20]">
+      {/* ヘッダー */}
       <div className="w-full max-w-5xl flex justify-end items-center gap-4 py-4">
         {!user ? (
           <div className="flex items-center gap-3">
@@ -190,11 +187,13 @@ export default function CelticCrossPage() {
 
       <h1 className="text-4xl md:text-6xl font-black my-12 text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 text-center uppercase">タロット占い</h1>
       
+      {/* フォーム */}
       <div className="glass flex flex-col gap-4 mb-16 w-full max-w-md p-6 rounded-2xl glow-blue">
         <input type="text" placeholder="相談したい悩みをここへ..." className="bg-black/40 border border-indigo-500/30 rounded-lg px-4 py-3 text-indigo-100 focus:outline-none focus:border-indigo-400 transition-all" value={userQuestion} onChange={(e) => setUserQuestion(e.target.value)} />
         <button onClick={startFortune} disabled={loading} className="bg-indigo-700/80 hover:bg-indigo-600 p-4 rounded-xl font-black tracking-widest transition-all active:scale-95 disabled:opacity-50">{loading ? "精神集中..." : "運命のカードを引く"}</button>
       </div>
 
+      {/* スプレッド */}
       <div className="relative">
         <AnimatePresence>
           {deck.length === 10 && flippedIndices.length < 10 && (
@@ -211,6 +210,7 @@ export default function CelticCrossPage() {
         </div>
       </div>
 
+      {/* 結果表示 */}
       <AnimatePresence>
         {flippedIndices.length === 10 && (
           <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-8 glass border border-indigo-500/30 rounded-3xl max-w-3xl w-full shadow-2xl relative z-20 overflow-hidden mb-10">
@@ -228,6 +228,7 @@ export default function CelticCrossPage() {
         )}
       </AnimatePresence>
 
+      {/* 過去の履歴 */}
       {user && history.length > 0 && (
         <div className="mt-20 w-full max-w-5xl px-4 pb-32">
           <h3 className="text-xs font-black text-indigo-400/60 uppercase tracking-[0.3em] mb-8 text-center">過去の神託</h3>
@@ -246,6 +247,7 @@ export default function CelticCrossPage() {
         </div>
       )}
 
+      {/* 詳細モーダル */}
       <AnimatePresence>
         {selectedHistory && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setSelectedHistory(null)}>
