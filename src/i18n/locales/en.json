@@ -49,6 +49,8 @@
     "processing": "Processing...",
     "or": "or",
     "googleLogin": "Sign in with Google",
+    "facebookLogin": "Sign in with Facebook",
+    "xLogin": "Sign in with X",
     "switchToSignUp": "Create New Account",
     "switchToLogin": "Back to Login",
     "forgotPassword": "Forgot Password?",
@@ -58,5 +60,38 @@
     "signUpSuccess": "Confirmation email sent. Please click the link in the email to complete registration.",
     "errorPrefix": "Error: ",
     "authDisabled": "Authentication is disabled. Please check environment variables."
+  },
+  "dataDeletion": {
+    "title": "Data Deletion Instructions",
+    "subtitle": "How to delete data saved through Facebook Login",
+    "whatWeCollect": {
+      "title": "Data We Collect",
+      "items": [
+        "Facebook account information (name, email address)",
+        "Reading history and results",
+        "Login timestamps and activity information"
+      ]
+    },
+    "howToDelete": {
+      "title": "How to Delete Your Data",
+      "steps": [
+        "After logging in, open the profile menu in the top right corner",
+        "Navigate to the 'Profile' page",
+        "Click the 'Delete Account' button at the bottom of the page",
+        "Select 'Delete' in the confirmation dialog",
+        "All your data will be immediately deleted"
+      ]
+    },
+    "timeline": {
+      "title": "Deletion Timeline",
+      "description": "When you execute account deletion, all data will be immediately removed. Please note that data cannot be recovered after deletion."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "description": "If you have any questions about data deletion, please contact us at the email address below.",
+      "emailSubject": "Regarding Data Deletion",
+      "emailButton": "Contact Support"
+    },
+    "backToHome": "Back to Home"
   }
 }

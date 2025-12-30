@@ -49,6 +49,8 @@
     "processing": "处理中...",
     "or": "或",
     "googleLogin": "使用Google登录",
+    "facebookLogin": "使用Facebook登录",
+    "xLogin": "使用X登录",
     "switchToSignUp": "创建新账户",
     "switchToLogin": "返回登录",
     "forgotPassword": "忘记密码?",
@@ -58,5 +60,38 @@
     "signUpSuccess": "已发送确认邮件。请点击邮件中的链接完成注册。",
     "errorPrefix": "错误: ",
     "authDisabled": "认证功能已禁用。请检查环境变量。"
+  },
+  "dataDeletion": {
+    "title": "数据删除说明",
+    "subtitle": "如何删除通过Facebook登录保存的数据",
+    "whatWeCollect": {
+      "title": "我们收集的数据",
+      "items": [
+        "Facebook账户信息（姓名、电子邮件地址）",
+        "占卜历史和解读结果",
+        "登录时间和活动信息"
+      ]
+    },
+    "howToDelete": {
+      "title": "如何删除您的数据",
+      "steps": [
+        "登录后，打开右上角的个人资料菜单",
+        "进入「个人资料」页面",
+        "点击页面底部的「删除账户」按钮",
+        "在确认对话框中选择「删除」",
+        "您的所有数据将立即被删除"
+      ]
+    },
+    "timeline": {
+      "title": "删除时间",
+      "description": "执行账户删除后，所有数据将立即被删除。请注意，删除后的数据无法恢复。"
+    },
+    "contact": {
+      "title": "联系我们",
+      "description": "如果您对数据删除有任何疑问，请通过以下电子邮件地址联系我们。",
+      "emailSubject": "关于数据删除",
+      "emailButton": "联系客服"
+    },
+    "backToHome": "返回主页"
   }
 }

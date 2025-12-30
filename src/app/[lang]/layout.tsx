@@ -38,6 +38,14 @@ export async function generateMetadata({
   const { lang } = await params as { lang: Locale };
   const dict = await getDictionary(lang);
 
+  // If dict is undefined, return minimal metadata
+  if (!dict) {
+    return {
+      title: 'AI Tarot Reading',
+      description: 'AI-powered tarot reading app',
+    };
+  }
+
   const baseUrl = 'https://www.tarotai.jp';
   const locale = lang === 'ja' ? 'ja_JP' : lang === 'zh' ? 'zh_CN' : 'en_US';
 

@@ -49,6 +49,8 @@
     "processing": "処理中...",
     "or": "または",
     "googleLogin": "Googleでログイン",
+    "facebookLogin": "Facebookでログイン",
+    "xLogin": "Xでログイン",
     "switchToSignUp": "新規アカウント作成",
     "switchToLogin": "ログインに戻る",
     "forgotPassword": "パスワードを忘れた場合",
@@ -97,5 +99,38 @@
     "update": "パスワードを更新",
     "success": "パスワードを更新しました",
     "loginNow": "ログインする"
+  },
+  "dataDeletion": {
+    "title": "データ削除手順",
+    "subtitle": "Facebookログインで保存されたデータの削除方法",
+    "whatWeCollect": {
+      "title": "収集するデータ",
+      "items": [
+        "Facebookアカウント情報（名前、メールアドレス）",
+        "占い履歴とリーディング結果",
+        "ログイン日時とアクティビティ情報"
+      ]
+    },
+    "howToDelete": {
+      "title": "データ削除手順",
+      "steps": [
+        "ログイン後、画面右上のプロフィールメニューを開く",
+        "「プロフィール」ページに移動",
+        "ページ下部の「アカウントを削除」ボタンをクリック",
+        "確認ダイアログで「削除する」を選択",
+        "すべてのデータが即座に削除されます"
+      ]
+    },
+    "timeline": {
+      "title": "削除までの期間",
+      "description": "アカウント削除を実行すると、すべてのデータは即座に削除されます。削除後のデータ復元はできませんので、ご注意ください。"
+    },
+    "contact": {
+      "title": "お問い合わせ",
+      "description": "データ削除に関してご不明な点がございましたら、以下のメールアドレスまでお問い合わせください。",
+      "emailSubject": "データ削除について",
+      "emailButton": "サポートに連絡"
+    },
+    "backToHome": "ホームに戻る"
   }
 }
