@@ -28,11 +28,10 @@ export function getSupabaseClient(): SupabaseClient | null {
 
   // 新しいインスタンスを作成
   supabaseInstance = createBrowserClient(supabaseUrl, supabaseAnonKey, {
-    cookieOptions: {
-      domain: process.env.NODE_ENV === 'production' ? '.tarotai.jp' : undefined,
-      path: '/',
-      sameSite: 'lax',
-      secure: true,
+    auth: {
+      persistSession: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce',
     },
   });
 

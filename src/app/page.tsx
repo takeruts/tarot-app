@@ -5,8 +5,6 @@ import { getSupabaseClient } from '@/src/lib/supabase';
 import Head from 'next/head';
 import type { TarotCard as TarotCardType, TarotCardProps, TarotHistory, AppUser, JsonLdSchema } from '@/src/types';
 
-const KACHIPEA_LOGIN_URL = "https://www.kachi.tarotai.jp/login";
-
 const TarotCard = ({ card, index, isFlipped, onFlip }: TarotCardProps) => {
   if (!card) return <div className="w-24 h-40 md:w-32 md:h-52 bg-indigo-900/20 rounded-lg animate-pulse border border-indigo-500/30" />;
   const positionClasses = ["col-start-2 row-start-2", "col-start-2 row-start-2 z-10 rotate-90 scale-90 translate-y-2", "col-start-2 row-start-1", "col-start-2 row-start-3", "col-start-1 row-start-2", "col-start-3 row-start-2", "col-start-4 row-start-4", "col-start-4 row-start-3", "col-start-4 row-start-2", "col-start-4 row-start-1"];
@@ -61,33 +59,10 @@ export default function CelticCrossPage() {
     if (data) setHistory(data as TarotHistory[]);
   };
 
-  const fetchNickname = async (userId: string): Promise<void> => {
-    if (!supabase) return;
-    const { data } = await supabase
-      .from('value_profiles')
-      .select('nickname')
-      .eq('id', userId)
-      .single();
-    if (data) {
-      setNickname(data.nickname);
-      setNewNickname(data.nickname);
-    }
-  };
-
   const updateNickname = async (): Promise<void> => {
-    if (!supabase || !user || !newNickname.trim()) return;
-    setLoading(true);
-    const { error } = await supabase
-      .from('value_profiles')
-      .upsert({ id: user.id, nickname: newNickname.trim(), updated_at: new Date().toISOString() });
-
-    if (error) {
-      alert("ニックネームの更新に失敗しました。");
-    } else {
-      setNickname(newNickname.trim());
-      setIsEditingNickname(false);
-    }
-    setLoading(false);
+    // user_metadataは読み取り専用のため、ニックネーム更新はKachipiで行う必要があります
+    alert("ニックネームの変更はKachipiの管理画面から行ってください。");
+    setIsEditingNickname(false);
   };
 
   useEffect(() => {
@@ -100,14 +75,27 @@ export default function CelticCrossPage() {
     }
 
     const initAuth = async () => {
-      // Cookieベースの認証に統一
-      // カチピからのリダイレクト時は、Cookieに既にセッションが設定されている
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      console.log('[Auth] 認証状態を確認中...');
+
+      // セッションを取得（セッションがない場合でもエラーを投げない）
+      const { data: { session } } = await supabase.auth.getSession();
+      const currentUser = session?.user ?? null;
 
       if (currentUser) {
         setUser(currentUser);
+
+        // ユーザーメタデータまたはemailからニックネームを取得
+        const metadataNickname = currentUser.user_metadata?.nickname ||
+                                 currentUser.user_metadata?.ai_name ||
+                                 currentUser.user_metadata?.name ||
+                                 currentUser.email?.split('@')[0];
+
+        if (metadataNickname) {
+          setNickname(metadataNickname);
+          setNewNickname(metadataNickname);
+        }
+
         fetchHistory(currentUser.id);
-        fetchNickname(currentUser.id);
       } else {
         setUser(null);
         setNickname(null);
@@ -120,8 +108,19 @@ export default function CelticCrossPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser(session.user);
+
+        // メタデータまたはemailからニックネームを取得
+        const metadataNickname = session.user.user_metadata?.nickname ||
+                                 session.user.user_metadata?.ai_name ||
+                                 session.user.user_metadata?.name ||
+                                 session.user.email?.split('@')[0];
+
+        if (metadataNickname) {
+          setNickname(metadataNickname);
+          setNewNickname(metadataNickname);
+        }
+
         fetchHistory(session.user.id);
-        fetchNickname(session.user.id);
       } else if (_event === 'SIGNED_OUT') {
         setUser(null);
         setNickname(null);
@@ -134,7 +133,8 @@ export default function CelticCrossPage() {
   }, []);
 
   const handleLogin = (): void => {
-    window.location.href = `${KACHIPEA_LOGIN_URL}?redirect_to=${encodeURIComponent(window.location.origin)}`;
+    // タロットアプリ内のログインページにリダイレクト
+    window.location.href = '/login';
   };
 
   const startFortune = async (): Promise<void> => {
@@ -224,13 +224,13 @@ export default function CelticCrossPage() {
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
-                  <span 
+                  <span
                     className="text-xs text-indigo-200 opacity-70 cursor-pointer hover:text-indigo-400 transition-colors flex items-center gap-2"
-                    onClick={() => setIsEditingNickname(true)}
+                    onClick={() => window.location.href = '/profile'}
                   >
                     ようこそ {nickname || user.email?.split('@')[0]} さん
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </span>
                   <div className="w-[1px] h-3 bg-indigo-500/20" />
