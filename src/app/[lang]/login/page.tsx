@@ -91,27 +91,34 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a20] text-white flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-indigo-950/30 p-8 rounded-3xl shadow-2xl border border-indigo-500/20">
+    <div className="min-h-screen bg-[#0a0a20] text-white flex items-center justify-center p-4 relative overflow-hidden">
+      {/* 背景アニメーション */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-magic"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-600/20 rounded-full blur-3xl animate-magic" style={{ animationDelay: '1.5s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl animate-magic" style={{ animationDelay: '3s' }}></div>
+      </div>
+
+      <div className="max-w-md w-full glass-strong p-10 rounded-3xl shadow-2xl border border-white/20 glow-purple relative z-10 backdrop-blur-xl">
         <div className="text-center mb-10">
           <Link href={`/${lang}`}>
-            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 mb-2 tracking-tighter cursor-pointer uppercase">
+            <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 mb-3 tracking-tight cursor-pointer uppercase animate-gradient glow-text-purple">
               {dict.title}
             </h1>
           </Link>
-          <p className="text-indigo-400/60 text-xs font-bold uppercase tracking-wider">
+          <p className="text-purple-300/80 text-sm font-bold uppercase tracking-wider">
             {isSignUp ? dict.auth.signUpTitle : dict.auth.loginTitle}
           </p>
         </div>
 
-        <form className="space-y-4" onSubmit={isSignUp ? handleSignUp : handleSignIn}>
+        <form className="space-y-5" onSubmit={isSignUp ? handleSignUp : handleSignIn}>
           <div>
-            <label className="text-xs font-bold text-indigo-300/60 uppercase block mb-2 ml-1 tracking-widest">
+            <label className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300 uppercase block mb-3 ml-1 tracking-wider">
               {dict.auth.email}
             </label>
             <input
               type="email"
-              className="w-full p-4 rounded-xl bg-black/40 text-indigo-100 border border-indigo-500/30 focus:border-indigo-400 outline-none transition-all"
+              className="w-full p-4 rounded-xl bg-black/30 text-indigo-50 border-2 border-white/20 focus:border-purple-400 focus:shadow-lg focus:shadow-purple-500/30 outline-none transition-all duration-300 placeholder:text-indigo-300/40"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={dict.auth.emailPlaceholder}
@@ -120,13 +127,13 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
           </div>
 
           <div>
-            <label className="text-xs font-bold text-indigo-300/60 uppercase block mb-2 ml-1 tracking-widest">
+            <label className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300 uppercase block mb-3 ml-1 tracking-wider">
               {dict.auth.password}
             </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
-                className="w-full p-4 pr-14 rounded-xl bg-black/40 text-indigo-100 border border-indigo-500/30 focus:border-indigo-400 outline-none transition-all font-mono"
+                className="w-full p-4 pr-16 rounded-xl bg-black/30 text-indigo-50 border-2 border-white/20 focus:border-purple-400 focus:shadow-lg focus:shadow-purple-500/30 outline-none transition-all duration-300 font-mono placeholder:text-indigo-300/40"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={dict.auth.passwordPlaceholder}
@@ -135,7 +142,7 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400/60 hover:text-indigo-300 transition"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-purple-300/70 hover:text-purple-200 transition-colors"
               >
                 {showPassword ? (
                   <span className="text-xs font-bold uppercase">{dict.auth.hidePassword}</span>
@@ -156,21 +163,22 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
             </div>
           )}
 
-          <div className="flex flex-col gap-3 pt-6">
+          <div className="flex flex-col gap-4 pt-6">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600/80 text-white font-black h-14 rounded-xl shadow-lg hover:bg-indigo-500 transition active:scale-95 disabled:bg-gray-700 disabled:opacity-50 uppercase tracking-wider"
+              className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:via-pink-500 hover:to-indigo-500 text-white font-black h-14 rounded-xl shadow-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-wider relative overflow-hidden group"
             >
-              {loading ? dict.auth.processing : (isSignUp ? dict.auth.signUpButton : dict.auth.loginButton)}
+              <span className="relative z-10">{loading ? dict.auth.processing : (isSignUp ? dict.auth.signUpButton : dict.auth.loginButton)}</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
 
-            <div className="relative my-6">
+            <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-indigo-500/20"></div>
+                <div className="w-full border-t border-white/20"></div>
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-indigo-950/30 px-2 text-indigo-400/60 font-bold">{dict.auth.or}</span>
+                <span className="glass px-3 py-1 text-purple-300/80 font-bold rounded-full">{dict.auth.or}</span>
               </div>
             </div>
 
@@ -179,7 +187,7 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
               onClick={() => handleOAuthLogin('google')}
               type="button"
               disabled={loading}
-              className="w-full bg-white text-gray-800 font-bold h-12 rounded-xl shadow-lg hover:bg-gray-100 transition active:scale-95 disabled:bg-gray-300 disabled:opacity-50 flex items-center justify-center gap-3"
+              className="w-full bg-white text-gray-800 font-bold h-13 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 active:scale-95 disabled:bg-gray-300 disabled:opacity-50 flex items-center justify-center gap-3"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -195,7 +203,7 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
               onClick={() => handleOAuthLogin('facebook')}
               type="button"
               disabled={loading}
-              className="w-full bg-[#1877F2] text-white font-bold h-12 rounded-xl shadow-lg hover:bg-[#1664D8] transition active:scale-95 disabled:bg-gray-600 disabled:opacity-50 flex items-center justify-center gap-3"
+              className="w-full bg-[#1877F2] hover:bg-[#1664D8] text-white font-bold h-13 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 active:scale-95 disabled:bg-gray-600 disabled:opacity-50 flex items-center justify-center gap-3"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -208,7 +216,7 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
               onClick={() => handleOAuthLogin('twitter')}
               type="button"
               disabled={loading}
-              className="w-full bg-black text-white font-bold h-12 rounded-xl shadow-lg hover:bg-gray-900 transition active:scale-95 disabled:bg-gray-700 disabled:opacity-50 flex items-center justify-center gap-3 border border-gray-700"
+              className="w-full bg-black hover:bg-gray-900 text-white font-bold h-13 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 active:scale-95 disabled:bg-gray-700 disabled:opacity-50 flex items-center justify-center gap-3 border-2 border-gray-700 hover:border-gray-600"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -222,7 +230,7 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
                 setMessage(null)
               }}
               type="button"
-              className="w-full bg-transparent text-indigo-400/60 font-bold h-12 rounded-xl border border-indigo-500/20 hover:bg-indigo-500/10 transition active:scale-95 text-xs uppercase tracking-wider"
+              className="w-full bg-white/5 text-purple-300 hover:text-purple-200 font-bold h-12 rounded-xl border-2 border-white/20 hover:bg-white/10 hover:border-white/30 transition-all duration-300 active:scale-95 text-sm uppercase tracking-wider"
             >
               {isSignUp ? dict.auth.switchToLogin : dict.auth.switchToSignUp}
             </button>
@@ -231,11 +239,11 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
 
         <div className="mt-8 text-center space-y-3">
           {!isSignUp && (
-            <Link href={`/${lang}/reset-password`} className="block text-xs font-bold text-indigo-400/60 hover:text-indigo-300 transition">
+            <Link href={`/${lang}/reset-password`} className="block text-sm font-bold text-purple-300/70 hover:text-purple-200 transition-colors">
               {dict.auth.forgotPassword}
             </Link>
           )}
-          <Link href={`/${lang}`} className="block text-xs font-bold text-indigo-500/40 hover:text-indigo-400 transition uppercase tracking-widest">
+          <Link href={`/${lang}`} className="block text-sm font-bold text-pink-300/60 hover:text-pink-200 transition-colors uppercase tracking-wider">
             {dict.auth.backToHome}
           </Link>
         </div>

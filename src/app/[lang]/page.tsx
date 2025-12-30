@@ -262,14 +262,14 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
 
       <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight bg-[#0a0a20]">
         {/* ヘッダー */}
-        <div className="w-full max-w-5xl flex justify-between items-center gap-4 py-4">
+        <div className="w-full max-w-5xl flex justify-between items-center gap-4 py-6">
           <div className="flex items-center gap-3">
             {user && (
               <Link
                 href={`/${lang}/connect`}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600/20 border border-indigo-400/30 text-xs hover:bg-indigo-500/40 transition-all font-bold text-indigo-300"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-400/30 text-sm hover:from-purple-500/30 hover:to-pink-500/30 hover:border-purple-300/50 transition-all duration-300 font-bold text-purple-200 shadow-lg hover:shadow-xl hover:shadow-purple-500/20 hover:scale-105"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
                 {dict.connect}
@@ -277,55 +277,62 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
             )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <LanguageSwitcher />
 
             {!user ? (
               <div className="flex items-center gap-3">
-                <button onClick={handleLogin} className="px-5 py-2 rounded-full bg-indigo-600/40 border border-indigo-400/30 text-xs hover:bg-indigo-500/60 transition-all font-bold">{dict.login}</button>
+                <button onClick={handleLogin} className="px-6 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 border border-indigo-400/40 text-sm hover:from-indigo-500 hover:to-purple-500 hover:shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 font-bold hover:scale-105">{dict.login}</button>
               </div>
             ) : (
-              <div className="flex items-center gap-4 bg-indigo-950/30 px-4 py-2 rounded-2xl border border-indigo-500/10">
+              <div className="flex items-center gap-4 glass px-5 py-2.5 rounded-full border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center gap-3">
                   <span
-                    className="text-xs text-indigo-200 opacity-70 cursor-pointer hover:text-indigo-400 transition-colors flex items-center gap-2"
+                    className="text-sm text-purple-100 cursor-pointer hover:text-pink-300 transition-colors flex items-center gap-2 font-semibold"
                     onClick={() => window.location.href = `/${lang}/profile`}
                   >
                     {nickname || user.email?.split('@')[0]}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </span>
-                  <div className="w-[1px] h-3 bg-indigo-500/20" />
-                  <button onClick={() => supabase?.auth.signOut().then(() => window.location.reload())} className="text-[10px] text-indigo-400/50 hover:text-indigo-300 uppercase font-bold">{dict.logout}</button>
+                  <div className="w-[1px] h-4 bg-white/20" />
+                  <button onClick={() => supabase?.auth.signOut().then(() => window.location.reload())} className="text-xs text-purple-300/70 hover:text-purple-200 uppercase font-bold transition-colors">{dict.logout}</button>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-black mt-12 mb-6 text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 text-center font-[family-name:var(--font-zen-kaku)] tracking-tight">{dict.title}</h1>
+        <div className="relative mt-12 mb-8">
+          <h1 className="text-5xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 text-center tracking-tight animate-gradient glow-text-purple drop-shadow-2xl">
+            {dict.title}
+          </h1>
+          <div className="absolute -inset-4 bg-gradient-to-r from-purple-600/20 via-pink-600/20 to-indigo-600/20 blur-3xl -z-10 animate-magic rounded-full"></div>
+        </div>
 
         <div className="max-w-2xl w-full text-center mb-12 space-y-4 px-6">
-          <p className="text-sm md:text-base text-indigo-200/80 leading-relaxed font-medium">
+          <p className="text-base md:text-lg text-indigo-100/90 leading-relaxed font-medium drop-shadow-lg">
             {dict.description}
           </p>
         </div>
 
         {/* フォーム */}
-        <div className="glass flex flex-col gap-6 mb-16 w-full max-w-2xl p-6 rounded-2xl glow-blue">
+        <div className="glass-strong flex flex-col gap-6 mb-16 w-full max-w-2xl p-8 rounded-3xl glow-purple shadow-2xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-indigo-500/5 animate-gradient"></div>
+
           {/* カテゴリー選択 */}
-          <div>
-            <label className="text-xs font-bold text-indigo-300/80 uppercase block mb-3 tracking-widest">{dict.category.title}</label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="relative z-10">
+            <label className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300 uppercase block mb-4 tracking-widest">{dict.category.title}</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {categories.map((cat) => (
                 <button
                   key={cat.value}
                   onClick={() => setCategory(cat.value)}
-                  className={`p-3 rounded-lg font-bold text-sm transition-all ${
+                  className={`p-3.5 rounded-xl font-bold text-sm transition-all duration-300 ${
                     category === cat.value
-                      ? `bg-gradient-to-r ${cat.color} text-white scale-105 shadow-lg`
-                      : 'bg-indigo-900/20 text-indigo-300/60 hover:bg-indigo-800/30 border border-indigo-500/20'
+                      ? `bg-gradient-to-r ${cat.color} text-white scale-105 shadow-lg shadow-${cat.color}/50 glow-blue`
+                      : 'bg-white/5 text-indigo-300/70 hover:bg-white/10 hover:scale-105 border border-white/10 hover:border-white/20'
                   }`}
                 >
                   {cat.label}
@@ -335,12 +342,12 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
           </div>
 
           {/* 質問入力 */}
-          <div>
-            <label className="text-xs font-bold text-indigo-300/80 uppercase block mb-3 tracking-widest">{dict.question.placeholder}</label>
+          <div className="relative z-10">
+            <label className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300 uppercase block mb-4 tracking-widest">{dict.question.placeholder}</label>
             <input
               type="text"
               placeholder={dict.question.placeholder}
-              className="w-full bg-black/40 border border-indigo-500/30 rounded-lg px-4 py-3 text-indigo-100 focus:outline-none focus:border-indigo-400 transition-all"
+              className="w-full bg-black/30 border-2 border-white/20 rounded-xl px-5 py-4 text-indigo-50 placeholder:text-indigo-300/40 focus:outline-none focus:border-purple-400 focus:shadow-lg focus:shadow-purple-500/30 transition-all duration-300 text-base"
               value={userQuestion}
               onChange={(e) => setUserQuestion(e.target.value)}
             />
@@ -349,9 +356,10 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
           <button
             onClick={startFortune}
             disabled={loading || !category}
-            className="bg-indigo-700/80 hover:bg-indigo-600 p-4 rounded-xl font-black tracking-widest transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="relative z-10 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:via-pink-500 hover:to-indigo-500 p-5 rounded-xl font-black tracking-widest transition-all duration-300 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shadow-xl hover:shadow-2xl hover:shadow-purple-500/50 text-lg overflow-hidden group"
           >
-            {loading ? dict.ai.analyzing : category ? dict.cards.draw : dict.question.required}
+            <span className="relative z-10">{loading ? dict.ai.analyzing : category ? dict.cards.draw : dict.question.required}</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </button>
         </div>
 
@@ -385,24 +393,28 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
         {/* 結果表示 */}
         <AnimatePresence>
           {flippedIndices.length === 10 && (
-            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-6 md:p-8 glass border border-indigo-500/30 rounded-3xl max-w-5xl w-full shadow-2xl relative z-20 overflow-hidden mb-10">
-              <h2 className="text-2xl mb-8 text-indigo-200 font-black text-center uppercase tracking-widest">{dict.ai.advice}</h2>
+            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-8 md:p-10 glass-strong border-2 border-white/20 rounded-3xl max-w-5xl w-full shadow-2xl glow-purple relative z-20 overflow-hidden mb-10">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-indigo-500/10 animate-gradient"></div>
+              <h2 className="text-3xl mb-10 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-pink-300 to-indigo-300 font-black text-center uppercase tracking-wider relative z-10 animate-gradient glow-text-purple">{dict.ai.advice}</h2>
               {!aiAdvice ? (
-                <div className="text-center py-10">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="animate-spin w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full"></div>
-                    <p className="text-indigo-300 font-bold tracking-widest">{dict.ai.analyzing}</p>
+                <div className="text-center py-10 relative z-10">
+                  <div className="flex flex-col items-center gap-6">
+                    <div className="relative">
+                      <div className="animate-spin w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full"></div>
+                      <div className="absolute inset-0 animate-ping w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full opacity-20"></div>
+                    </div>
+                    <p className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300 font-black tracking-wider text-lg animate-pulse">{dict.ai.analyzing}</p>
                   </div>
                 </div>
               ) : (
-                <div className="grid md:grid-cols-[300px_1fr] gap-6 md:gap-8">
+                <div className="grid md:grid-cols-[300px_1fr] gap-6 md:gap-8 relative z-10">
                   {/* Card Layout Section */}
-                  <div className="bg-black/30 p-4 md:p-6 rounded-xl border border-white/5">
-                    <h3 className="text-xs font-bold text-indigo-400 mb-4 uppercase tracking-widest">{dict.cardPosition}</h3>
+                  <div className="bg-black/30 p-5 md:p-6 rounded-2xl border-2 border-white/10 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                    <h3 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300 mb-5 uppercase tracking-wider">{dict.cardPosition}</h3>
                     <div className="space-y-3">
                       {deck.map((card, i) => (
-                        <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-indigo-500/5 hover:bg-indigo-500/10 transition-colors">
-                          <div className="w-12 h-16 flex-shrink-0 relative rounded overflow-hidden border border-indigo-500/20 shadow-md">
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-white/5 to-white/0 hover:from-purple-500/10 hover:to-pink-500/5 transition-all duration-300 border border-white/5 hover:border-white/10 hover:scale-[1.02]">
+                          <div className="w-12 h-16 flex-shrink-0 relative rounded-lg overflow-hidden border-2 border-purple-500/20 shadow-lg">
                             <img
                               src={card.image_url?.replace('/public', '')}
                               alt={card.name}
@@ -410,13 +422,13 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="text-[10px] font-black text-indigo-400/80 uppercase tracking-wider mb-0.5">
+                            <div className="text-[10px] font-black text-purple-300/70 uppercase tracking-wider mb-1">
                               {i + 1}. {positionNames[i]}
                             </div>
-                            <div className="text-xs font-bold text-indigo-100 truncate">
+                            <div className="text-sm font-bold text-indigo-50 truncate">
                               {card.name}
                             </div>
-                            <div className="text-[9px] text-indigo-300/60 font-medium">
+                            <div className="text-[10px] text-pink-300/50 font-semibold">
                               {card.isReversed ? positionLabel.reversed : positionLabel.upright}
                             </div>
                           </div>
@@ -426,8 +438,9 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
                   </div>
 
                   {/* AI Advice Section */}
-                  <div className="bg-black/30 p-6 md:p-8 rounded-xl border border-white/5 relative">
-                    <p className="whitespace-pre-wrap text-left text-indigo-50 font-medium leading-relaxed md:text-lg">{aiAdvice}</p>
+                  <div className="bg-black/30 p-6 md:p-8 rounded-2xl border-2 border-white/10 relative shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl"></div>
+                    <p className="whitespace-pre-wrap text-left text-indigo-50 font-medium leading-relaxed md:text-lg relative z-10">{aiAdvice}</p>
                   </div>
                 </div>
               )}
@@ -438,25 +451,25 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
         {/* 過去の履歴 */}
         {user && history.length > 0 && (
           <div className="mt-20 w-full max-w-5xl px-4 pb-32">
-            <h3 className="text-xs font-black text-indigo-400/60 uppercase tracking-[0.3em] mb-8 text-center">{dict.history}</h3>
+            <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-pink-300 to-indigo-300 uppercase tracking-wider mb-10 text-center animate-gradient">{dict.history}</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {history.map((item) => {
                 const itemCategory = categories.find(c => c.value === (item as any).category);
                 return (
-                  <motion.div key={item.id} whileHover={{ scale: 1.05 }} onClick={() => setSelectedHistory(item)} className="cursor-pointer p-4 rounded-xl bg-indigo-900/20 border border-indigo-500/10 hover:border-indigo-500/40 transition-all flex flex-col aspect-[3/4] justify-between relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-indigo-900/40 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div>
-                      <div className="flex items-center gap-1 mb-1">
-                        <p className="text-[9px] text-indigo-400/60 font-bold">{new Date(item.created_at).toLocaleDateString()}</p>
+                  <motion.div key={item.id} whileHover={{ scale: 1.08, y: -5 }} onClick={() => setSelectedHistory(item)} className="cursor-pointer p-5 rounded-2xl glass border-2 border-white/10 hover:border-purple-400/50 transition-all duration-300 flex flex-col aspect-[3/4] justify-between relative overflow-hidden group shadow-lg hover:shadow-2xl hover:shadow-purple-500/20">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <p className="text-[10px] text-purple-300/60 font-bold">{new Date(item.created_at).toLocaleDateString()}</p>
                         {itemCategory && (
-                          <span className={`text-[8px] px-1.5 py-0.5 rounded-full bg-gradient-to-r ${itemCategory.color} text-white font-bold`}>
+                          <span className={`text-[9px] px-2 py-0.5 rounded-full bg-gradient-to-r ${itemCategory.color} text-white font-bold shadow-md`}>
                             {(item as any).category}
                           </span>
                         )}
                       </div>
-                      <h4 className="text-[11px] font-bold text-indigo-100 line-clamp-2 leading-tight uppercase">{item.question || dict.noHistory}</h4>
+                      <h4 className="text-xs font-bold text-indigo-50 line-clamp-3 leading-snug">{item.question || dict.noHistory}</h4>
                     </div>
-                    <div className="text-[9px] text-indigo-300/40 self-end font-black italic">{dict.viewDetails}</div>
+                    <div className="text-[10px] text-pink-300/60 self-end font-black italic relative z-10 group-hover:text-pink-200 transition-colors">{dict.viewDetails}</div>
                   </motion.div>
                 );
               })}

@@ -7,36 +7,35 @@
   :root {
     --font-sans: var(--font-geist-sans);
     --font-mono: var(--font-geist-mono);
-    --background: #050510;
-    --foreground: #e0e7ff;
+    --background: #0f0f23;
+    --foreground: #f0f4ff;
 
-    /* 占いサイト用のミスティックカラー */
-    --color-mystic-bg: #050510;
-    --color-mystic-gold: #c5a059;
+    /* ポップでモダンなミスティックカラー */
+    --color-mystic-bg: #0f0f23;
+    --color-mystic-gold: #fbbf24;
+    --color-mystic-purple: #a855f7;
+    --color-mystic-pink: #ec4899;
     --color-mystic-blue: #6366f1;
+    --color-mystic-cyan: #06b6d4;
   }
 
-  /* html全体に背景を指定するのが最も確実です */
+  /* モダンなグラデーション背景 */
   html {
     min-height: 100vh;
-    background-color: #050510; /* 画像が読み込まれるまでの予備色 */
-    background-image: 
-      linear-gradient(to bottom, rgba(5, 5, 16, 0.6), rgba(5, 5, 16, 0.8)), 
-      url('/images/bg-room.jpg');
-    background-size: cover;
-    background-position: center;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 25%, #16213e 50%, #0f0f23 100%);
     background-attachment: fixed;
-    background-repeat: no-repeat;
   }
 
   body {
-    /* body自体の背景色を消すことで、htmlの背景画像が見えるようにします */
     background: transparent !important;
     color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -46,50 +45,100 @@
   .perspective-1000 {
     perspective: 1000px;
   }
-  
+
   /* 回転時に表面と裏面を別々に管理 */
   .preserve-3d {
     transform-style: preserve-3d;
   }
-  
+
   /* 回転したときに「裏側の絵」が透けないようにする */
   .backface-hidden {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
   }
-  
+
   /* カード表面（最初は180度裏を向いている） */
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
 
-  /* 魔法陣やクリスタルの輝きを演出するグロー効果 */
+  /* モダンなネオングロー効果 */
   .glow-blue {
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), 0 0 5px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5), 0 0 40px rgba(99, 102, 241, 0.2), 0 0 60px rgba(99, 102, 241, 0.1);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.2);
+  }
+
+  .glow-pink {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.5), 0 0 40px rgba(236, 72, 153, 0.2);
   }
 
   .glow-text {
-    text-shadow: 0 0 10px rgba(165, 180, 252, 0.5);
+    text-shadow: 0 0 20px rgba(165, 180, 252, 0.8), 0 0 10px rgba(165, 180, 252, 0.6);
   }
 
-  /* ガラスのような透過質感（グラスモーフィズム） */
+  .glow-text-purple {
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.8), 0 0 10px rgba(168, 85, 247, 0.6);
+  }
+
+  /* モダンなグラスモーフィズム */
   .glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-strong {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 }
 
-/* アニメーション：魔法陣の鼓動 */
+/* ポップなアニメーション */
 @keyframes magic-pulse {
-  0% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.05); }
-  100% { opacity: 0.2; transform: scale(1); }
+  0% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+  100% { opacity: 0.3; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .animate-magic {
-  animation: magic-pulse 4s ease-in-out infinite;
+  animation: magic-pulse 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s linear infinite;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 200% 100%;
+}
+
+.animate-gradient {
+  animation: gradient-shift 8s ease infinite;
+  background-size: 200% 200%;
 }
 
 .font-shippori {
