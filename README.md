@@ -16,9 +16,10 @@ AIを活用した本格的なタロット占いアプリです。「当てる」
 
 ### 🔐 認証システム
 - **メール/パスワード認証**: Supabase Authによる安全な認証
-- **Googleソーシャルログイン**: ワンクリックでログイン可能
+- **ソーシャルログイン**: Google、Facebook、X（Twitter）でワンクリックログイン
 - **パスワードリセット**: メールでのパスワード再設定機能
 - **プロフィール管理**: ニックネーム編集、パスワード変更
+- **データ削除手順**: Facebook審査対応のデータ削除ガイドページ
 
 ### 📊 履歴管理
 - **相談履歴の保存**: 過去の占い結果をデータベースに保存
@@ -35,6 +36,7 @@ AIを活用した本格的なタロット占いアプリです。「当てる」
 - **レスポンシブ対応**: モバイル・タブレット・デスクトップ完全対応
 - **アニメーション**: Framer Motionによる滑らかなカードめくり演出
 - **ガラスモーフィズム**: 神秘的な雰囲気を演出
+- **アプリアイコン**: ファビコン、Apple用アイコン、OGP画像、Facebook用アイコン完備
 
 ### 🌍 多言語対応（Multilingual Support）
 - **3言語完全対応**: 日本語（🇯🇵）・英語（🇺🇸）・中国語（🇨🇳）
@@ -88,8 +90,10 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 # OpenAI API
 OPENAI_API_KEY=your_openai_api_key
 
-# Google OAuth (オプション)
+# OAuth設定（オプション）
 NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID=your_google_client_id
+NEXT_PUBLIC_FACEBOOK_APP_ID=your_facebook_app_id
+NEXT_PUBLIC_TWITTER_CLIENT_ID=your_twitter_client_id
 ```
 
 ### 4. Supabaseテーブルの作成
@@ -114,6 +118,7 @@ tarot-app/
 ├── src/
 │   ├── app/
 │   │   ├── [lang]/            # 言語別ルーティング
+│   │   │   ├── data-deletion/ # データ削除手順ページ
 │   │   │   ├── layout.tsx     # 言語別レイアウト
 │   │   │   └── page.tsx       # 言語別メインページ
 │   │   ├── api/
@@ -122,6 +127,9 @@ tarot-app/
 │   │   │   └── matching/      # ユーザーマッチングAPI
 │   │   ├── auth/
 │   │   │   └── callback/      # 認証コールバック
+│   │   ├── icon.tsx           # ファビコン (32x32)
+│   │   ├── apple-icon.tsx     # Apple用アイコン (180x180)
+│   │   ├── opengraph-image.tsx # OGP画像 (1200x630)
 │   │   ├── connect/           # ユーザー交流ページ
 │   │   ├── login/             # ログインページ
 │   │   ├── profile/           # プロフィール編集
@@ -147,7 +155,8 @@ tarot-app/
 │   │   └── index.ts           # TypeScript型定義
 │   └── middleware.ts          # 言語リダイレクトミドルウェア
 ├── public/
-│   └── images/                # カード画像
+│   ├── images/                # カード画像
+│   └── facebook-icon.png      # Facebook用アイコン (1024x1024)
 ├── supabase-schema.sql        # DBスキーマ
 ├── add-category-column.sql    # カラム追加SQL
 └── README.md
@@ -195,16 +204,32 @@ https://www.tarotai.jp/zh       # 中国語版
 ### 認証の仕組み
 
 1. ユーザーがログインボタンをクリック
-2. `/login` ページでメール/パスワードまたはGoogleログイン
+2. `/login` ページでメール/パスワードまたはソーシャルログイン（Google / Facebook / X）を選択
 3. Supabaseがセッションを管理（PKCE flow）
 4. ログイン成功後、ホームページにリダイレクト
 
 ### 新規登録の流れ
 
 1. `/login` ページで「新規アカウント作成」を選択
-2. メールアドレスとパスワードを入力
-3. 確認メールが送信される
+2. メールアドレスとパスワードを入力、またはソーシャルログインを選択
+3. 確認メールが送信される（メール/パスワード認証の場合）
 4. メール内のリンクをクリックして登録完了
+
+### OAuth設定
+
+Facebook、X（Twitter）ログインを有効にするには、Supabase Dashboardで各プロバイダーの設定が必要です：
+
+1. **Supabase Dashboard** → **Authentication** → **Providers**
+2. 各プロバイダー（Facebook, Twitter）を有効化
+3. App ID / Client IDとApp Secret / Client Secretを設定
+4. Callback URLを設定: `https://your-project.supabase.co/auth/v1/callback`
+
+### データ削除手順ページ
+
+Facebook Developer Console審査対応のため、データ削除手順ページを提供：
+- **URL**: `/ja/data-deletion`, `/en/data-deletion`, `/zh/data-deletion`
+- ユーザーデータの削除方法を3ヶ国語で説明
+- Facebook App設定の「User Data Deletion Callback URL」に設定可能
 
 ## 📊 データベース構成
 
@@ -252,6 +277,9 @@ https://www.tarotai.jp/zh       # 中国語版
 - [ ] プッシュ通知対応
 - [ ] PWA対応
 - [x] マルチ言語対応（英語、中国語）✅ **完了**
+- [x] Facebook・X OAuth ログイン ✅ **完了**
+- [x] アプリアイコン一式（ファビコン、OGP画像など）✅ **完了**
+- [x] データ削除手順ページ（Facebook審査対応）✅ **完了**
 - [ ] ダークモード/ライトモード切り替え
 - [ ] 追加言語対応（韓国語、スペイン語など）
 
