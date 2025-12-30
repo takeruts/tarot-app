@@ -68,6 +68,15 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
     { value: dict.category.other, label: dict.category.other, color: 'from-gray-500 to-slate-500' },
   ] : [];
 
+  // Celtic Cross position names (matching the API)
+  const positionNames = dict ? (
+    lang === 'ja' ? ["現状", "障害", "顕在意識", "潜在意識", "過去", "未来", "立場", "環境", "願望", "結論"] :
+    lang === 'zh' ? ["现状", "障碍", "显意识", "潜意识", "过去", "未来", "立场", "环境", "愿望", "结论"] :
+    ["Present", "Challenge", "Conscious", "Subconscious", "Past", "Future", "Position", "Environment", "Hopes", "Outcome"]
+  ) : [];
+
+  const positionLabel = dict ? (lang === 'ja' ? { reversed: '逆位置', upright: '正位置' } : lang === 'zh' ? { reversed: '逆位', upright: '正位' } : { reversed: 'Reversed', upright: 'Upright' }) : { reversed: '', upright: '' };
+
   const jsonLd: JsonLdSchema = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -376,7 +385,7 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
         {/* 結果表示 */}
         <AnimatePresence>
           {flippedIndices.length === 10 && (
-            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-8 glass border border-indigo-500/30 rounded-3xl max-w-3xl w-full shadow-2xl relative z-20 overflow-hidden mb-10">
+            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="mt-20 p-6 md:p-8 glass border border-indigo-500/30 rounded-3xl max-w-5xl w-full shadow-2xl relative z-20 overflow-hidden mb-10">
               <h2 className="text-2xl mb-8 text-indigo-200 font-black text-center uppercase tracking-widest">{dict.ai.advice}</h2>
               {!aiAdvice ? (
                 <div className="text-center py-10">
@@ -386,8 +395,40 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
                   </div>
                 </div>
               ) : (
-                <div className="bg-black/30 p-8 rounded-xl border border-white/5 relative">
-                  <p className="whitespace-pre-wrap text-left text-indigo-50 font-medium leading-relaxed md:text-lg">{aiAdvice}</p>
+                <div className="grid md:grid-cols-[300px_1fr] gap-6 md:gap-8">
+                  {/* Card Layout Section */}
+                  <div className="bg-black/30 p-4 md:p-6 rounded-xl border border-white/5">
+                    <h3 className="text-xs font-bold text-indigo-400 mb-4 uppercase tracking-widest">{dict.cardPosition}</h3>
+                    <div className="space-y-3">
+                      {deck.map((card, i) => (
+                        <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-indigo-500/5 hover:bg-indigo-500/10 transition-colors">
+                          <div className="w-12 h-16 flex-shrink-0 relative rounded overflow-hidden border border-indigo-500/20 shadow-md">
+                            <img
+                              src={card.image_url?.replace('/public', '')}
+                              alt={card.name}
+                              className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180' : ''}`}
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[10px] font-black text-indigo-400/80 uppercase tracking-wider mb-0.5">
+                              {i + 1}. {positionNames[i]}
+                            </div>
+                            <div className="text-xs font-bold text-indigo-100 truncate">
+                              {card.name}
+                            </div>
+                            <div className="text-[9px] text-indigo-300/60 font-medium">
+                              {card.isReversed ? positionLabel.reversed : positionLabel.upright}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* AI Advice Section */}
+                  <div className="bg-black/30 p-6 md:p-8 rounded-xl border border-white/5 relative">
+                    <p className="whitespace-pre-wrap text-left text-indigo-50 font-medium leading-relaxed md:text-lg">{aiAdvice}</p>
+                  </div>
                 </div>
               )}
             </motion.div>
