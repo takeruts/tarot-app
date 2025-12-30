@@ -15,8 +15,15 @@ const TarotCard = ({ card, index, isFlipped, onFlip }: TarotCardProps) => {
            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30"></div>
            <img src="/images/card-back.png" alt="Card Back" className="w-[85%] h-[85%] object-contain drop-shadow-[0_0_10px_rgba(165,180,252,0.8)] z-10" />
         </div>
-        <div className="absolute inset-0 w-full h-full backface-hidden bg-white rounded-lg overflow-hidden rotate-y-180 shadow-2xl">
-          <img src={card.image_url?.replace('/public', '')} alt={card.name} className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180' : ''}`} />
+        <div className="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-amber-100 via-yellow-50 to-amber-50 rounded-lg overflow-hidden rotate-y-180 shadow-2xl p-1.5">
+          <div className="relative w-full h-full rounded-md overflow-hidden border-2 border-amber-600/70 shadow-[inset_0_0_15px_rgba(180,83,9,0.2)]">
+            <div className="absolute inset-0 border border-amber-400/50 m-0.5 rounded-sm pointer-events-none"></div>
+            <div className="absolute top-1 left-1 w-4 h-4 border-t border-l border-amber-700/40"></div>
+            <div className="absolute top-1 right-1 w-4 h-4 border-t border-r border-amber-700/40"></div>
+            <div className="absolute bottom-1 left-1 w-4 h-4 border-b border-l border-amber-700/40"></div>
+            <div className="absolute bottom-1 right-1 w-4 h-4 border-b border-r border-amber-700/40"></div>
+            <img src={card.image_url?.replace('/public', '')} alt={card.name} className={`w-full h-full object-cover ${card.isReversed ? 'rotate-180' : ''}`} />
+          </div>
         </div>
       </motion.div>
     </div>

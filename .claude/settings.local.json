@@ -12,7 +12,9 @@
       "Bash(npm uninstall:*)",
       "Bash(npm install:*)",
       "Bash(npx tailwindcss init -p)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\n認証機能を完全統合：スタンドアロン認証システムの実装\n\n- パスワードリセット機能を追加（メール送信＋更新ページ）\n- Googleソーシャルログインボタンを実装\n- プロフィール編集ページを新規作成\n- ニックネーム変更機能をプロフィールページに統合\n- Tailwind CSS v4からv3.4.19にダウングレード（Turbopack互換性対応）\n- Kachipi認証依存を削除し、Supabase単独認証に移行\n- セッション管理を改善（getUser→getSessionに変更）\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)"
     ]
   }
 }
