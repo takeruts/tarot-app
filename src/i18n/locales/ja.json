@@ -36,5 +36,66 @@
   "viewDetails": "詳細を見る",
   "close": "閉じる",
   "cardPosition": "カードの配置",
-  "createdAt": "占った日時"
+  "createdAt": "占った日時",
+  "auth": {
+    "loginTitle": "ログイン",
+    "signUpTitle": "新規アカウント作成",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "showPassword": "Show",
+    "hidePassword": "Hide",
+    "loginButton": "ログイン",
+    "signUpButton": "アカウント作成",
+    "processing": "処理中...",
+    "or": "または",
+    "googleLogin": "Googleでログイン",
+    "switchToSignUp": "新規アカウント作成",
+    "switchToLogin": "ログインに戻る",
+    "forgotPassword": "パスワードを忘れた場合",
+    "backToHome": "← ホームに戻る",
+    "emailPlaceholder": "mail@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signUpSuccess": "確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。",
+    "errorPrefix": "エラー: ",
+    "authDisabled": "認証機能が無効です。環境変数を確認してください。"
+  },
+  "connectPage": {
+    "title": "似た悩みを持つ仲間を見つける",
+    "subtitle": "あなたの相談内容と似た悩みを持つユーザーとつながることができます",
+    "loading": "マッチング候補を探しています...",
+    "noMatches": "現在、マッチング候補はありません",
+    "noMatchesDesc": "占いの履歴が増えると、似た悩みを持つユーザーが見つかりやすくなります",
+    "matchScore": "一致度",
+    "commonTopics": "共通の関心",
+    "sampleQuestion": "相談例",
+    "sendRequest": "つながりリクエストを送る",
+    "requestSent": "リクエスト送信済み"
+  },
+  "profilePage": {
+    "title": "プロフィール編集",
+    "nickname": "ニックネーム",
+    "nicknamePlaceholder": "ニックネームを入力",
+    "updateNickname": "ニックネームを更新",
+    "currentPassword": "現在のパスワード",
+    "newPassword": "新しいパスワード",
+    "newPasswordConfirm": "新しいパスワード（確認）",
+    "updatePassword": "パスワードを変更",
+    "passwordMismatch": "パスワードが一致しません",
+    "updateSuccess": "更新しました",
+    "changePassword": "パスワード変更"
+  },
+  "resetPassword": {
+    "title": "パスワードリセット",
+    "subtitle": "登録したメールアドレスにリセット用のリンクを送信します",
+    "sendLink": "リセットリンクを送信",
+    "success": "パスワードリセット用のメールを送信しました。メール内のリンクをクリックしてパスワードを再設定してください。",
+    "backToLogin": "← ログインに戻る"
+  },
+  "updatePassword": {
+    "title": "新しいパスワードを設定",
+    "subtitle": "新しいパスワードを入力してください",
+    "update": "パスワードを更新",
+    "success": "パスワードを更新しました",
+    "loginNow": "ログインする"
+  }
 }

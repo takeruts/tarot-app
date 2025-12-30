@@ -78,5 +78,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <html lang="ja" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${zenKaku.variable} antialiased`}
+        suppressHydrationWarning
+      >
+        {children}
+      </body>
+    </html>
+  );
 }

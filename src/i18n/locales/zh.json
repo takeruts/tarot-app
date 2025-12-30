@@ -36,5 +36,27 @@
   "viewDetails": "查看详情",
   "close": "关闭",
   "cardPosition": "卡牌布局",
-  "createdAt": "占卜日期"
+  "createdAt": "占卜日期",
+  "auth": {
+    "loginTitle": "登录",
+    "signUpTitle": "创建新账户",
+    "email": "电子邮件",
+    "password": "密码",
+    "showPassword": "Show",
+    "hidePassword": "Hide",
+    "loginButton": "登录",
+    "signUpButton": "创建账户",
+    "processing": "处理中...",
+    "or": "或",
+    "googleLogin": "使用Google登录",
+    "switchToSignUp": "创建新账户",
+    "switchToLogin": "返回登录",
+    "forgotPassword": "忘记密码?",
+    "backToHome": "← 返回主页",
+    "emailPlaceholder": "mail@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signUpSuccess": "已发送确认邮件。请点击邮件中的链接完成注册。",
+    "errorPrefix": "错误: ",
+    "authDisabled": "认证功能已禁用。请检查环境变量。"
+  }
 }

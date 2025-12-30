@@ -36,5 +36,27 @@
   "viewDetails": "View Details",
   "close": "Close",
   "cardPosition": "Card Layout",
-  "createdAt": "Reading Date"
+  "createdAt": "Reading Date",
+  "auth": {
+    "loginTitle": "Login",
+    "signUpTitle": "Create New Account",
+    "email": "Email Address",
+    "password": "Password",
+    "showPassword": "Show",
+    "hidePassword": "Hide",
+    "loginButton": "Login",
+    "signUpButton": "Create Account",
+    "processing": "Processing...",
+    "or": "or",
+    "googleLogin": "Sign in with Google",
+    "switchToSignUp": "Create New Account",
+    "switchToLogin": "Back to Login",
+    "forgotPassword": "Forgot Password?",
+    "backToHome": "← Back to Home",
+    "emailPlaceholder": "mail@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signUpSuccess": "Confirmation email sent. Please click the link in the email to complete registration.",
+    "errorPrefix": "Error: ",
+    "authDisabled": "Authentication is disabled. Please check environment variables."
+  }
 }

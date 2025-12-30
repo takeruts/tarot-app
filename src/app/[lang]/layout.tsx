@@ -108,13 +108,15 @@ export default async function LangLayout({
   params: Promise<{ lang: Locale }>;
 }>) {
   const { lang } = await params;
+
   return (
-    <html lang={lang}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${zenKaku.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang = '${lang}';`,
+        }}
+      />
+      {children}
+    </>
   );
 }
