@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSupabaseClient } from '@/src/lib/supabase';
 import Head from 'next/head';
+import Link from 'next/link';
 import type { TarotCard as TarotCardType, TarotCardProps, TarotHistory, AppUser, JsonLdSchema } from '@/src/types';
 
 const TarotCard = ({ card, index, isFlipped, onFlip }: TarotCardProps) => {
@@ -36,6 +37,7 @@ export default function CelticCrossPage() {
   const [aiAdvice, setAiAdvice] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [userQuestion, setUserQuestion] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
   const [user, setUser] = useState<AppUser | null>(null);
   const [nickname, setNickname] = useState<string | null>(null);
   const [isEditingNickname, setIsEditingNickname] = useState<boolean>(false);
@@ -46,6 +48,16 @@ export default function CelticCrossPage() {
 
   // Supabase clientを取得（singleton）
   const supabase = getSupabaseClient();
+
+  const categories = [
+    { value: '恋愛', label: '💕 恋愛', color: 'from-pink-500 to-rose-500' },
+    { value: '仕事', label: '💼 仕事・キャリア', color: 'from-blue-500 to-indigo-500' },
+    { value: '人間関係', label: '👥 人間関係', color: 'from-green-500 to-emerald-500' },
+    { value: '健康', label: '🌿 健康・メンタル', color: 'from-teal-500 to-cyan-500' },
+    { value: 'お金', label: '💰 お金・経済', color: 'from-yellow-500 to-amber-500' },
+    { value: '将来', label: '🌟 将来・目標', color: 'from-purple-500 to-violet-500' },
+    { value: 'その他', label: '🔮 その他', color: 'from-gray-500 to-slate-500' },
+  ];
 
   const jsonLd: JsonLdSchema = {
     "@context": "https://schema.org",
@@ -175,7 +187,8 @@ export default function CelticCrossPage() {
           user_id: user.id,
           question: userQuestion,
           advice: data.advice,
-          cards: deck
+          cards: deck,
+          category: category
         }]);
         if (error) {
           console.error('履歴保存エラー:', error);
@@ -189,6 +202,14 @@ export default function CelticCrossPage() {
       setLoading(false);
     }
   };
+
+  // カードが全てめくられたら自動的にAIリーディングを開始
+  useEffect(() => {
+    if (flippedIndices.length === 10 && deck.length === 10 && !aiAdvice && !loading) {
+      askAI();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flippedIndices]);
 
   if (!mounted) return <div className="min-h-screen bg-[#0a0a20]" />;
 
@@ -209,7 +230,21 @@ export default function CelticCrossPage() {
 
       <div className="min-h-screen p-4 text-white flex flex-col items-center font-sans tracking-tight bg-[#0a0a20]">
         {/* ヘッダー */}
-        <div className="w-full max-w-5xl flex justify-end items-center gap-4 py-4">
+        <div className="w-full max-w-5xl flex justify-between items-center gap-4 py-4">
+          {/* 交流ページリンク（ログイン時のみ表示） */}
+          {user && (
+            <Link
+              href="/connect"
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600/20 border border-indigo-400/30 text-xs hover:bg-indigo-500/40 transition-all font-bold text-indigo-300"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              仲間を探す
+            </Link>
+          )}
+          {!user && <div></div>}
+
           {!user ? (
             <div className="flex items-center gap-3">
               <span className="text-[10px] md:text-xs text-indigo-300/60 font-medium tracking-wider bg-indigo-500/5 px-4 py-2 rounded-full border border-indigo-500/10">結果を保存できます</span>
@@ -262,9 +297,46 @@ export default function CelticCrossPage() {
         </div>
 
         {/* フォーム */}
-        <div className="glass flex flex-col gap-4 mb-16 w-full max-w-md p-6 rounded-2xl glow-blue">
-          <input type="text" placeholder="相談したい悩みをここへ..." className="bg-black/40 border border-indigo-500/30 rounded-lg px-4 py-3 text-indigo-100 focus:outline-none focus:border-indigo-400 transition-all" value={userQuestion} onChange={(e) => setUserQuestion(e.target.value)} />
-          <button onClick={startFortune} disabled={loading} className="bg-indigo-700/80 hover:bg-indigo-600 p-4 rounded-xl font-black tracking-widest transition-all active:scale-95 disabled:opacity-50">{loading ? "精神集中..." : "運命のカードを引く"}</button>
+        <div className="glass flex flex-col gap-6 mb-16 w-full max-w-2xl p-6 rounded-2xl glow-blue">
+          {/* カテゴリー選択 */}
+          <div>
+            <label className="text-xs font-bold text-indigo-300/80 uppercase block mb-3 tracking-widest">悩みのカテゴリー</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat.value}
+                  onClick={() => setCategory(cat.value)}
+                  className={`p-3 rounded-lg font-bold text-sm transition-all ${
+                    category === cat.value
+                      ? `bg-gradient-to-r ${cat.color} text-white scale-105 shadow-lg`
+                      : 'bg-indigo-900/20 text-indigo-300/60 hover:bg-indigo-800/30 border border-indigo-500/20'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 質問入力 */}
+          <div>
+            <label className="text-xs font-bold text-indigo-300/80 uppercase block mb-3 tracking-widest">相談内容</label>
+            <input
+              type="text"
+              placeholder="相談したい悩みをここへ..."
+              className="w-full bg-black/40 border border-indigo-500/30 rounded-lg px-4 py-3 text-indigo-100 focus:outline-none focus:border-indigo-400 transition-all"
+              value={userQuestion}
+              onChange={(e) => setUserQuestion(e.target.value)}
+            />
+          </div>
+
+          <button
+            onClick={startFortune}
+            disabled={loading || !category}
+            className="bg-indigo-700/80 hover:bg-indigo-600 p-4 rounded-xl font-black tracking-widest transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "精神集中..." : category ? "運命のカードを引く" : "カテゴリーを選択してください"}
+          </button>
         </div>
 
         {/* スプレッド */}
@@ -272,14 +344,24 @@ export default function CelticCrossPage() {
           <AnimatePresence>
             {deck.length === 10 && flippedIndices.length < 10 && (
               <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute -top-16 left-0 right-0 text-center z-20">
-                <p className="text-indigo-300 font-bold tracking-widest text-sm animate-pulse">カードを１枚ずつクリックして、めくってください</p>
+                {category ? (
+                  <p className="text-indigo-300 font-bold tracking-widest text-sm animate-pulse">カードを１枚ずつクリックして、めくってください</p>
+                ) : (
+                  <p className="text-red-400 font-bold tracking-widest text-sm animate-pulse">⚠ カテゴリーを選択してください</p>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
 
           <div className="grid grid-cols-4 grid-rows-4 gap-4 md:gap-8 w-fit mx-auto relative z-10">
             {deck.length === 10 && deck.map((card, i) => (
-              <TarotCard key={card.id + i} card={card} index={i} isFlipped={flippedIndices.includes(i)} onFlip={(idx: number) => { if (!flippedIndices.includes(idx)) setFlippedIndices([...flippedIndices, idx]); }} />
+              <TarotCard
+                key={card.id + i}
+                card={card}
+                index={i}
+                isFlipped={flippedIndices.includes(i)}
+                onFlip={category ? (idx: number) => { if (!flippedIndices.includes(idx)) setFlippedIndices([...flippedIndices, idx]); } : undefined}
+              />
             ))}
           </div>
         </div>
@@ -291,7 +373,10 @@ export default function CelticCrossPage() {
               <h2 className="text-2xl mb-8 text-indigo-200 font-black text-center uppercase tracking-widest">リーディング</h2>
               {!aiAdvice ? (
                 <div className="text-center py-10">
-                  <button onClick={askAI} disabled={loading} className="bg-gradient-to-r from-indigo-800 to-purple-900 px-10 py-4 rounded-xl font-black tracking-widest">{loading ? "星々を読み解いています..." : "AIに詳しく相談する"}</button>
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="animate-spin w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full"></div>
+                    <p className="text-indigo-300 font-bold tracking-widest">星々を読み解いています...</p>
+                  </div>
                 </div>
               ) : (
                 <div className="bg-black/30 p-8 rounded-xl border border-white/5 relative">
@@ -307,16 +392,26 @@ export default function CelticCrossPage() {
           <div className="mt-20 w-full max-w-5xl px-4 pb-32">
             <h3 className="text-xs font-black text-indigo-400/60 uppercase tracking-[0.3em] mb-8 text-center">過去の神託</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {history.map((item) => (
-                <motion.div key={item.id} whileHover={{ scale: 1.05 }} onClick={() => setSelectedHistory(item)} className="cursor-pointer p-4 rounded-xl bg-indigo-900/20 border border-indigo-500/10 hover:border-indigo-500/40 transition-all flex flex-col aspect-[3/4] justify-between relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-indigo-900/40 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div>
-                    <p className="text-[9px] text-indigo-400/60 font-bold mb-1">{new Date(item.created_at).toLocaleDateString()}</p>
-                    <h4 className="text-[11px] font-bold text-indigo-100 line-clamp-2 leading-tight uppercase">{item.question || "無題"}</h4>
-                  </div>
-                  <div className="text-[9px] text-indigo-300/40 self-end font-black italic">READ MORE</div>
-                </motion.div>
-              ))}
+              {history.map((item) => {
+                const itemCategory = categories.find(c => c.value === (item as any).category);
+                return (
+                  <motion.div key={item.id} whileHover={{ scale: 1.05 }} onClick={() => setSelectedHistory(item)} className="cursor-pointer p-4 rounded-xl bg-indigo-900/20 border border-indigo-500/10 hover:border-indigo-500/40 transition-all flex flex-col aspect-[3/4] justify-between relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-indigo-900/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div>
+                      <div className="flex items-center gap-1 mb-1">
+                        <p className="text-[9px] text-indigo-400/60 font-bold">{new Date(item.created_at).toLocaleDateString()}</p>
+                        {itemCategory && (
+                          <span className={`text-[8px] px-1.5 py-0.5 rounded-full bg-gradient-to-r ${itemCategory.color} text-white font-bold`}>
+                            {(item as any).category}
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="text-[11px] font-bold text-indigo-100 line-clamp-2 leading-tight uppercase">{item.question || "無題"}</h4>
+                    </div>
+                    <div className="text-[9px] text-indigo-300/40 self-end font-black italic">READ MORE</div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -327,11 +422,21 @@ export default function CelticCrossPage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setSelectedHistory(null)}>
               <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="bg-[#0f0f2d] border border-indigo-500/30 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 md:p-10 shadow-[0_0_50px_rgba(79,70,229,0.2)]" onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <p className="text-xs text-indigo-400 font-bold mb-2 uppercase tracking-widest">{new Date(selectedHistory.created_at).toLocaleString()}</p>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest">{new Date(selectedHistory.created_at).toLocaleString()}</p>
+                      {(() => {
+                        const selectedCategory = categories.find(c => c.value === (selectedHistory as any).category);
+                        return selectedCategory && (
+                          <span className={`text-xs px-2 py-1 rounded-full bg-gradient-to-r ${selectedCategory.color} text-white font-bold`}>
+                            {selectedCategory.label}
+                          </span>
+                        );
+                      })()}
+                    </div>
                     <h2 className="text-xl md:text-2xl font-black text-indigo-100">Q: {selectedHistory.question || "無題の相談"}</h2>
                   </div>
-                  <button onClick={() => setSelectedHistory(null)} className="text-indigo-400 hover:text-white p-2 text-2xl">✕</button>
+                  <button onClick={() => setSelectedHistory(null)} className="text-indigo-400 hover:text-white p-2 text-2xl flex-shrink-0">✕</button>
                 </div>
                 <div className="grid md:grid-cols-[1fr_2fr] gap-8">
                   <div className="flex flex-wrap gap-2 justify-center content-start">
