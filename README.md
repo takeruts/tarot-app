@@ -72,5 +72,5 @@ npm run dev
 
 ---
 
-Copyright (c) 2025 **Kachipea Identity Central**
+Copyright (c) 2025 **Kachipi Identity Central**
 

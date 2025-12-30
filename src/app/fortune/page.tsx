@@ -1,11 +1,12 @@
 "use client";
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { TarotCard as TarotCardType, TarotCardProps } from '@/src/types';
 
 /**
  * カード1枚のコンポーネント
  */
-const TarotCard = ({ card, index, isFlipped, onFlip }: any) => {
+const TarotCard = ({ card, index, isFlipped, onFlip }: TarotCardProps) => {
   const positionClasses = [
     "col-start-2 row-start-2", // 1. 現状
     "col-start-2 row-start-2 z-20 rotate-90 scale-90 translate-y-2", // 2. 障害
@@ -26,7 +27,7 @@ const TarotCard = ({ card, index, isFlipped, onFlip }: any) => {
         initial={false}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.7, ease: "easeInOut" }}
-        onClick={() => onFlip(index)}
+        onClick={() => onFlip?.(index)}
       >
         {/* カードの裏面 (Back) */}
         <div className="absolute inset-0 w-full h-full backface-hidden bg-[#0a0a20] border-2 border-indigo-400/50 rounded-lg shadow-[0_0_15px_rgba(79,70,229,0.3)] flex items-center justify-center overflow-hidden">
@@ -64,34 +65,35 @@ const TarotCard = ({ card, index, isFlipped, onFlip }: any) => {
 };
 
 export default function CelticCrossPage() {
-  const [deck, setDeck] = useState<any[]>([]);
+  const [deck, setDeck] = useState<TarotCardType[]>([]);
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
-  const [aiAdvice, setAiAdvice] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [userQuestion, setUserQuestion] = useState("");
+  const [aiAdvice, setAiAdvice] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [userQuestion, setUserQuestion] = useState<string>("");
 
-  const startFortune = async () => {
+  const startFortune = async (): Promise<void> => {
     setLoading(true);
     try {
       const res = await fetch('/api/fortune');
-      const data = await res.json();
+      const data: TarotCardType[] = await res.json();
       setDeck(data);
       setFlippedIndices([]);
       setAiAdvice("");
     } catch (err) {
+      console.error('カード取得エラー:', err);
       alert("運命の接続に失敗しました。");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFlip = (index: number) => {
+  const handleFlip = (index: number): void => {
     if (deck.length > 0 && !flippedIndices.includes(index)) {
       setFlippedIndices([...flippedIndices, index]);
     }
   };
 
-  const askAI = async () => {
+  const askAI = async (): Promise<void> => {
     if (deck.length === 0) return;
     setLoading(true);
     try {
@@ -100,9 +102,10 @@ export default function CelticCrossPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cards: deck, userMessage: userQuestion }),
       });
-      const data = await response.json();
+      const data: { advice: string } = await response.json();
       setAiAdvice(data.advice);
     } catch (error) {
+      console.error('AI鑑定エラー:', error);
       setAiAdvice("星々の声が届きませんでした。再度お試しください。");
     } finally {
       setLoading(false);

@@ -1,24 +1,13 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from '@/src/lib/supabase';
 import Head from 'next/head';
+import type { TarotCard as TarotCardType, TarotCardProps, TarotHistory, AppUser, JsonLdSchema } from '@/src/types';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const KACHIPEA_LOGIN_URL = "https://www.kachi.tarotai.jp/login";
 
-const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    storageKey: 'sb-auth-token', 
-  }
-}) : null;
-
-const KACHIPEA_LOGIN_URL = "https://www.kachi.tarotai.jp/login"; 
-
-const TarotCard = ({ card, index, isFlipped, onFlip }: any) => {
+const TarotCard = ({ card, index, isFlipped, onFlip }: TarotCardProps) => {
   if (!card) return <div className="w-24 h-40 md:w-32 md:h-52 bg-indigo-900/20 rounded-lg animate-pulse border border-indigo-500/30" />;
   const positionClasses = ["col-start-2 row-start-2", "col-start-2 row-start-2 z-10 rotate-90 scale-90 translate-y-2", "col-start-2 row-start-1", "col-start-2 row-start-3", "col-start-1 row-start-2", "col-start-3 row-start-2", "col-start-4 row-start-4", "col-start-4 row-start-3", "col-start-4 row-start-2", "col-start-4 row-start-1"];
   return (
@@ -37,20 +26,23 @@ const TarotCard = ({ card, index, isFlipped, onFlip }: any) => {
 };
 
 export default function CelticCrossPage() {
-  const [deck, setDeck] = useState<any[]>([]);
+  const [deck, setDeck] = useState<TarotCardType[]>([]);
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
-  const [aiAdvice, setAiAdvice] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [userQuestion, setUserQuestion] = useState("");
-  const [user, setUser] = useState<any>(null);
+  const [aiAdvice, setAiAdvice] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [userQuestion, setUserQuestion] = useState<string>("");
+  const [user, setUser] = useState<AppUser | null>(null);
   const [nickname, setNickname] = useState<string | null>(null);
-  const [isEditingNickname, setIsEditingNickname] = useState(false);
-  const [newNickname, setNewNickname] = useState("");
-  const [history, setHistory] = useState<any[]>([]);
-  const [selectedHistory, setSelectedHistory] = useState<any>(null);
-  const [mounted, setMounted] = useState(false);
+  const [isEditingNickname, setIsEditingNickname] = useState<boolean>(false);
+  const [newNickname, setNewNickname] = useState<string>("");
+  const [history, setHistory] = useState<TarotHistory[]>([]);
+  const [selectedHistory, setSelectedHistory] = useState<TarotHistory | null>(null);
+  const [mounted, setMounted] = useState<boolean>(false);
 
-  const jsonLd = {
+  // Supabase clientを取得（singleton）
+  const supabase = getSupabaseClient();
+
+  const jsonLd: JsonLdSchema = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "AIタロット占い - 内面を整理する神託",
@@ -59,17 +51,17 @@ export default function CelticCrossPage() {
     "operatingSystem": "All"
   };
 
-  const fetchHistory = async (userId: string) => {
+  const fetchHistory = async (userId: string): Promise<void> => {
     if (!supabase) return;
     const { data } = await supabase
       .from('tarot_history')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    if (data) setHistory(data);
+    if (data) setHistory(data as TarotHistory[]);
   };
 
-  const fetchNickname = async (userId: string) => {
+  const fetchNickname = async (userId: string): Promise<void> => {
     if (!supabase) return;
     const { data } = await supabase
       .from('value_profiles')
@@ -82,13 +74,13 @@ export default function CelticCrossPage() {
     }
   };
 
-  const updateNickname = async () => {
+  const updateNickname = async (): Promise<void> => {
     if (!supabase || !user || !newNickname.trim()) return;
     setLoading(true);
     const { error } = await supabase
       .from('value_profiles')
-      .upsert({ id: user.id, nickname: newNickname.trim(), updated_at: new Date() });
-    
+      .upsert({ id: user.id, nickname: newNickname.trim(), updated_at: new Date().toISOString() });
+
     if (error) {
       alert("ニックネームの更新に失敗しました。");
     } else {
@@ -100,30 +92,17 @@ export default function CelticCrossPage() {
 
   useEffect(() => {
     setMounted(true);
-    if (!supabase) return;
+
+    // Supabaseが初期化されていない場合は認証機能をスキップ
+    if (!supabase) {
+      console.warn('Supabase未初期化: 認証機能は無効です');
+      return;
+    }
 
     const initAuth = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
-
-      let currentUser = null;
-
-      if (accessToken && refreshToken) {
-        const { data } = await supabase.auth.setSession({ 
-          access_token: accessToken, 
-          refresh_token: refreshToken 
-        });
-        if (data?.user) {
-          currentUser = data.user;
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-      }
-
-      if (!currentUser) {
-        const { data: { user: verifiedUser } } = await supabase.auth.getUser();
-        currentUser = verifiedUser;
-      }
+      // Cookieベースの認証に統一
+      // カチピからのリダイレクト時は、Cookieに既にセッションが設定されている
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
 
       if (currentUser) {
         setUser(currentUser);
@@ -138,39 +117,43 @@ export default function CelticCrossPage() {
 
     initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser(session.user);
         fetchHistory(session.user.id);
         fetchNickname(session.user.id);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null); 
-        setNickname(null); 
+      } else if (_event === 'SIGNED_OUT') {
+        setUser(null);
+        setNickname(null);
         setHistory([]);
       }
     });
 
     return () => subscription.unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = (): void => {
     window.location.href = `${KACHIPEA_LOGIN_URL}?redirect_to=${encodeURIComponent(window.location.origin)}`;
   };
 
-  const startFortune = async () => {
+  const startFortune = async (): Promise<void> => {
     setLoading(true);
     try {
       const res = await fetch('/api/fortune');
-      const data = await res.json();
-      setDeck(data); setFlippedIndices([]); setAiAdvice("");
+      const data: TarotCardType[] = await res.json();
+      setDeck(data);
+      setFlippedIndices([]);
+      setAiAdvice("");
     } catch (err) {
+      console.error('カード取得エラー:', err);
       alert("運命の接続に失敗しました。");
     } finally {
       setLoading(false);
     }
   };
 
-  const askAI = async () => {
+  const askAI = async (): Promise<void> => {
     setLoading(true);
     try {
       const response = await fetch('/api/chat', {
@@ -178,13 +161,22 @@ export default function CelticCrossPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cards: deck, userMessage: userQuestion }),
       });
-      const data = await response.json();
+      const data: { advice: string } = await response.json();
       setAiAdvice(data.advice);
       if (user && supabase) {
-        await supabase.from('tarot_history').insert([{ user_id: user.id, question: userQuestion, advice: data.advice, cards: deck }]);
+        const { error } = await supabase.from('tarot_history').insert([{
+          user_id: user.id,
+          question: userQuestion,
+          advice: data.advice,
+          cards: deck
+        }]);
+        if (error) {
+          console.error('履歴保存エラー:', error);
+        }
         fetchHistory(user.id);
       }
     } catch (error) {
+      console.error('AI鑑定エラー:', error);
       setAiAdvice("星々の声が聞き取れませんでした。");
     } finally {
       setLoading(false);
