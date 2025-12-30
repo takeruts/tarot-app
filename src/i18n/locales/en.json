@@ -1,0 +1,40 @@
+{
+  "title": "AI Tarot Reading",
+  "subtitle": "Divine Guidance for Inner Clarity",
+  "description": "Tarot is a powerful tool for organizing your inner thoughts. By examining your concerns through the symbolic perspectives of each card, you can gain fresh insights and organize your inner world in ways you haven't before.",
+  "login": "Login",
+  "logout": "Logout",
+  "profile": "Profile",
+  "connect": "Connect",
+  "history": "Past Readings",
+  "profileUpdateMessage": "Please update your nickname from the profile page.",
+  "category": {
+    "title": "Select Consultation Category",
+    "love": "💕 Love & Romance",
+    "work": "💼 Work & Career",
+    "relationships": "👥 Relationships",
+    "health": "🏥 Health",
+    "money": "💰 Finance",
+    "future": "🔮 Future",
+    "other": "✨ Other"
+  },
+  "question": {
+    "placeholder": "Tell us what's on your mind...",
+    "submit": "Draw Your Destiny Cards",
+    "required": "※Please select a category"
+  },
+  "cards": {
+    "draw": "Draw Your Destiny Cards",
+    "click": "Click on the cards to reveal them",
+    "all": "Once all cards are revealed, AI will automatically provide detailed reading"
+  },
+  "ai": {
+    "analyzing": "AI is analyzing deep insights...",
+    "advice": "AI Guidance"
+  },
+  "noHistory": "No reading history yet",
+  "viewDetails": "View Details",
+  "close": "Close",
+  "cardPosition": "Card Layout",
+  "createdAt": "Reading Date"
+}

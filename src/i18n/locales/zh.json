@@ -1,0 +1,40 @@
+{
+  "title": "AI塔罗占卜",
+  "subtitle": "整理内心的神谕",
+  "description": "塔罗是整理内心世界的有效工具。通过每张牌所象征的视角来审视自己的烦恼和想法,您可以从全新的角度整理内心世界。",
+  "login": "登录",
+  "logout": "登出",
+  "profile": "个人资料",
+  "connect": "用户交流",
+  "history": "过去的神谕",
+  "profileUpdateMessage": "请从个人资料页面更改昵称。",
+  "category": {
+    "title": "选择咨询类别",
+    "love": "💕 恋爱",
+    "work": "💼 工作·职业",
+    "relationships": "👥 人际关系",
+    "health": "🏥 健康",
+    "money": "💰 金钱",
+    "future": "🔮 未来",
+    "other": "✨ 其他"
+  },
+  "question": {
+    "placeholder": "请告诉我们您的烦恼或想咨询的事情...",
+    "submit": "抽取命运之牌",
+    "required": "※请选择类别"
+  },
+  "cards": {
+    "draw": "抽取命运之牌",
+    "click": "点击卡片翻开",
+    "all": "翻开所有卡片后,AI将自动进行详细解读"
+  },
+  "ai": {
+    "analyzing": "AI正在分析深层洞察...",
+    "advice": "AI的建议"
+  },
+  "noHistory": "还没有占卜历史",
+  "viewDetails": "查看详情",
+  "close": "关闭",
+  "cardPosition": "卡牌布局",
+  "createdAt": "占卜日期"
+}

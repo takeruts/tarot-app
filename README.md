@@ -36,6 +36,12 @@ AIを活用した本格的なタロット占いアプリです。「当てる」
 - **アニメーション**: Framer Motionによる滑らかなカードめくり演出
 - **ガラスモーフィズム**: 神秘的な雰囲気を演出
 
+### 🌍 多言語対応
+- **3言語対応**: 日本語・英語・中国語に完全対応
+- **言語切り替え**: ヘッダーから簡単に言語を切り替え可能
+- **SEO最適化**: 各言語ごとにメタデータとサイトマップを自動生成
+- **自動言語検出**: ブラウザの言語設定に基づいて自動リダイレクト
+
 ## 🛠 技術スタック
 
 | カテゴリ | 技術 |
@@ -47,6 +53,7 @@ AIを活用した本格的なタロット占いアプリです。「当てる」
 | **Animation** | [Framer Motion](https://www.framer.com/motion/) |
 | **AI** | OpenAI API / Google Gemini API |
 | **Fonts** | Zen Kaku Gothic New, Orbitron (Google Fonts) |
+| **i18n** | Next.js App Router i18n (日本語・英語・中国語) |
 
 ## 🚀 セットアップ
 
@@ -101,6 +108,9 @@ npm run dev
 tarot-app/
 ├── src/
 │   ├── app/
+│   │   ├── [lang]/            # 言語別ルーティング
+│   │   │   ├── layout.tsx     # 言語別レイアウト
+│   │   │   └── page.tsx       # 言語別メインページ
 │   │   ├── api/
 │   │   │   ├── chat/          # AIリーディングAPI
 │   │   │   ├── fortune/       # カード配布API
@@ -113,14 +123,24 @@ tarot-app/
 │   │   ├── reset-password/    # パスワードリセット
 │   │   ├── update-password/   # パスワード更新
 │   │   ├── layout.tsx         # ルートレイアウト
-│   │   ├── page.tsx           # メインページ
+│   │   ├── page.tsx           # リダイレクトページ
 │   │   ├── sitemap.ts         # サイトマップ生成
 │   │   └── robots.ts          # robots.txt生成
+│   ├── components/
+│   │   └── LanguageSwitcher.tsx # 言語切り替えコンポーネント
+│   ├── i18n/
+│   │   ├── config.ts          # i18n設定
+│   │   ├── utils.ts           # i18n ユーティリティ
+│   │   └── locales/           # 翻訳ファイル
+│   │       ├── ja.json        # 日本語
+│   │       ├── en.json        # 英語
+│   │       └── zh.json        # 中国語
 │   ├── lib/
 │   │   ├── supabase.ts        # Supabaseクライアント
 │   │   └── matchingService.ts # マッチングロジック
-│   └── types/
-│       └── index.ts           # TypeScript型定義
+│   ├── types/
+│   │   └── index.ts           # TypeScript型定義
+│   └── middleware.ts          # 言語リダイレクトミドルウェア
 ├── public/
 │   └── images/                # カード画像
 ├── supabase-schema.sql        # DBスキーマ
@@ -170,10 +190,12 @@ tarot-app/
 
 - ✅ 構造化データ（JSON-LD）実装
 - ✅ Open Graph / Twitter Card対応
-- ✅ sitemap.xml自動生成
+- ✅ sitemap.xml自動生成（全言語対応）
 - ✅ robots.txt自動生成
-- ✅ メタタグ最適化
+- ✅ メタタグ最適化（言語別）
 - ✅ セマンティックHTML
+- ✅ hreflang属性による多言語SEO
+- ✅ 言語別URLによる検索エンジン最適化
 
 ## 📝 開発コンセプト
 
@@ -189,8 +211,9 @@ tarot-app/
 - [ ] リアルタイム通知
 - [ ] プッシュ通知対応
 - [ ] PWA対応
-- [ ] マルチ言語対応（英語、中国語）
+- [x] マルチ言語対応（英語、中国語）✅ **完了**
 - [ ] ダークモード/ライトモード切り替え
+- [ ] 追加言語対応（韓国語、スペイン語など）
 
 ## 📄 ライセンス
 

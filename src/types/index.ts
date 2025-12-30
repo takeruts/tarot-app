@@ -66,6 +66,7 @@ export interface AIAdviceResponse {
 export interface AIAdviceRequest {
   cards: TarotCard[];
   userMessage: string;
+  language?: 'ja' | 'en' | 'zh';
 }
 
 /**

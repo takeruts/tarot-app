@@ -78,13 +78,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${zenKaku.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+  return children;
 }
