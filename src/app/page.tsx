@@ -283,7 +283,7 @@ export default function CelticCrossPage() {
           )}
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-black mt-12 mb-6 text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 text-center uppercase">タロット占い</h1>
+        <h1 className="text-5xl md:text-7xl font-black mt-12 mb-6 text-transparent bg-clip-text bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-500 text-center font-[family-name:var(--font-zen-kaku)] tracking-tight">タロット占い</h1>
         
         {/* 追加した説明文 */}
         <div className="max-w-2xl w-full text-center mb-12 space-y-4 px-6">
