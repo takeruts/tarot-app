@@ -75,7 +75,23 @@ export interface JsonLdSchema {
   '@context': string;
   '@type': string;
   name: string;
+  alternateName?: string;
   description: string;
+  url?: string;
   applicationCategory?: string;
   operatingSystem?: string;
+  offers?: {
+    '@type': string;
+    price: string;
+    priceCurrency: string;
+  };
+  aggregateRating?: {
+    '@type': string;
+    ratingValue: string;
+    ratingCount: string;
+  };
+  author?: {
+    '@type': string;
+    name: string;
+  };
 }

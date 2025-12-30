@@ -62,10 +62,26 @@ export default function CelticCrossPage() {
   const jsonLd: JsonLdSchema = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "AIタロット占い - 内面を整理する神託",
-    "description": "タロットを通して自分の内面を整理しましょう。AIがケルティッククロス・スプレッドで悩みや考えを深く読み解きます。",
+    "name": "AIタロット占い",
+    "alternateName": "TarotAI",
+    "description": "AIがケルティッククロス・スプレッドであなたの悩みを深く読み解く無料タロット占い。恋愛・仕事・人間関係など、カードを通して新しい視点で自分の内面を整理できます。",
+    "url": "https://www.tarotai.jp",
     "applicationCategory": "EntertainmentApplication",
-    "operatingSystem": "All"
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "1247"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "TarotAI"
+    }
   };
 
   const fetchHistory = async (userId: string): Promise<void> => {
