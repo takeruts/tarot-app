@@ -33,6 +33,7 @@
     "advice": "AI Guidance"
   },
   "noHistory": "No reading history yet",
+  "noQuestion": "No question entered",
   "viewDetails": "View Details",
   "close": "Close",
   "cardPosition": "Card Layout",
@@ -94,6 +95,18 @@
     },
     "backToHome": "Back to Home"
   },
+  "connectPage": {
+    "title": "Find People with Similar Concerns",
+    "subtitle": "Connect with users who have similar concerns as yours",
+    "loading": "Looking for matches...",
+    "noMatches": "No matches found at the moment",
+    "noMatchesDesc": "As your reading history grows, it becomes easier to find users with similar concerns",
+    "matchScore": "Match Score",
+    "commonTopics": "Common Topics",
+    "sampleQuestion": "Sample Question",
+    "sendRequest": "Send Connection Request",
+    "requestSent": "Request Sent"
+  },
   "chat": {
     "title": "Chat Rooms",
     "rooms": "Room List",
@@ -117,6 +130,12 @@
     "hoursAgo": "h ago",
     "daysAgo": "d ago",
     "typing": "typing...",
-    "online": "online"
+    "online": "online",
+    "searchPlaceholder": "Search by room name...",
+    "filterByCategory": "Filter by category",
+    "allCategories": "All",
+    "roomsFound": "rooms found",
+    "noFilteredRooms": "No rooms match your criteria",
+    "tryDifferentFilter": "Try a different category or search keyword"
   }
 }

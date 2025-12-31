@@ -14,10 +14,13 @@ export default function ConnectPage({ params }: { params: Promise<{ lang: Locale
   const [dict, setDict] = useState<any>(null)
   const [user, setUser] = useState<AppUser | null>(null)
   const [rooms, setRooms] = useState<ChatRoom[]>([])
+  const [filteredRooms, setFilteredRooms] = useState<ChatRoom[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [newRoomName, setNewRoomName] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
+  const [filterCategory, setFilterCategory] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const router = useRouter()
   const supabase = getSupabaseClient()
 
@@ -70,12 +73,33 @@ export default function ConnectPage({ params }: { params: Promise<{ lang: Locale
       )
 
       setRooms(roomsWithMemberCount)
+      setFilteredRooms(roomsWithMemberCount)
     } catch (error) {
       console.error('Error fetching rooms:', error)
     } finally {
       setLoading(false)
     }
   }
+
+  // フィルタリングと検索
+  useEffect(() => {
+    let result = rooms
+
+    // カテゴリーでフィルター
+    if (filterCategory !== 'all') {
+      result = result.filter(room => room.category === filterCategory)
+    }
+
+    // 検索クエリでフィルター
+    if (searchQuery.trim()) {
+      result = result.filter(room =>
+        room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        room.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    }
+
+    setFilteredRooms(result)
+  }, [rooms, filterCategory, searchQuery])
 
   const createRoom = async () => {
     if (!supabase || !user || !newRoomName.trim() || !selectedCategory) return
@@ -144,14 +168,70 @@ export default function ConnectPage({ params }: { params: Promise<{ lang: Locale
           </p>
         </div>
 
-        {/* 作成ボタン */}
-        <div className="flex justify-end mb-8">
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:via-pink-500 hover:to-indigo-500 font-black shadow-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
-          >
-            + {dict.chat.createRoom}
-          </button>
+        {/* 検索とフィルター */}
+        <div className="glass-strong p-6 rounded-3xl border-2 border-white/10 mb-8">
+          {/* 検索バー */}
+          <div className="mb-6">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={dict.chat?.searchPlaceholder || "ルーム名で検索..."}
+                className="w-full p-4 pl-12 rounded-xl bg-black/30 text-indigo-50 border-2 border-white/20 focus:border-purple-400 focus:shadow-lg focus:shadow-purple-500/30 outline-none transition-all duration-300"
+              />
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-300/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+
+          {/* カテゴリーフィルター */}
+          <div>
+            <label className="text-sm font-bold text-purple-300/80 block mb-3">
+              {dict.chat?.filterByCategory || "カテゴリーで絞り込み"}
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setFilterCategory('all')}
+                className={`px-4 py-2 rounded-xl font-bold text-sm transition-all duration-300 ${
+                  filterCategory === 'all'
+                    ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 text-white scale-105 shadow-lg'
+                    : 'bg-white/5 text-indigo-300/70 hover:bg-white/10 hover:scale-105 border border-white/10 hover:border-white/20'
+                }`}
+              >
+                {dict.chat?.allCategories || "すべて"}
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat.value}
+                  onClick={() => setFilterCategory(cat.value)}
+                  className={`px-4 py-2 rounded-xl font-bold text-sm transition-all duration-300 ${
+                    filterCategory === cat.value
+                      ? `bg-gradient-to-r ${cat.color} text-white scale-105 shadow-lg`
+                      : 'bg-white/5 text-indigo-300/70 hover:bg-white/10 hover:scale-105 border border-white/10 hover:border-white/20'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 検索結果数 */}
+          {!loading && (
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-sm text-purple-300/60">
+                {filteredRooms.length} {dict.chat?.roomsFound || "件のルームが見つかりました"}
+              </p>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:via-pink-500 hover:to-indigo-500 font-black shadow-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
+              >
+                + {dict.chat.createRoom}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ルーム一覧 */}
@@ -160,20 +240,26 @@ export default function ConnectPage({ params }: { params: Promise<{ lang: Locale
             <div className="inline-block animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full"></div>
             <p className="mt-4 text-indigo-300/60">{dict.connectPage.loading}</p>
           </div>
-        ) : rooms.length === 0 ? (
+        ) : filteredRooms.length === 0 ? (
           <div className="text-center py-20 glass-strong rounded-3xl p-12 border-2 border-white/10">
-            <p className="text-2xl font-bold text-purple-300/80 mb-4">{dict.chat.noRooms}</p>
-            <p className="text-indigo-300/60 mb-8">{dict.chat.noRoomsDesc}</p>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:via-pink-500 hover:to-indigo-500 font-black shadow-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
-            >
-              + {dict.chat.createRoom}
-            </button>
+            <p className="text-2xl font-bold text-purple-300/80 mb-4">
+              {rooms.length === 0 ? dict.chat.noRooms : (dict.chat?.noFilteredRooms || "条件に合うルームが見つかりませんでした")}
+            </p>
+            <p className="text-indigo-300/60 mb-8">
+              {rooms.length === 0 ? dict.chat.noRoomsDesc : (dict.chat?.tryDifferentFilter || "別のカテゴリーや検索キーワードをお試しください")}
+            </p>
+            {rooms.length === 0 && (
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:via-pink-500 hover:to-indigo-500 font-black shadow-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
+              >
+                + {dict.chat.createRoom}
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {rooms.map((room) => {
+            {filteredRooms.map((room) => {
               const categoryData = categories.find(c => c.value === room.category)
               return (
                 <motion.div

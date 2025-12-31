@@ -87,27 +87,26 @@ export default function ChatRoomPage({ params }: { params: Promise<{ lang: Local
     try {
       const { data, error } = await supabase
         .from('chat_messages')
-        .select(`
-          *,
-          user:user_id (
-            id,
-            email,
-            user_metadata
-          )
-        `)
+        .select('*')
         .eq('room_id', roomId)
         .order('created_at', { ascending: true })
 
-      if (error) throw error
+      if (error) {
+        console.error('Error details:', error)
+        throw error
+      }
 
-      // ニックネームを追加
+      if (!data || data.length === 0) {
+        setMessages([])
+        return
+      }
+
+      // メッセージにニックネームを追加（自分のメッセージのみニックネーム表示）
       const messagesWithNickname = data.map((msg: any) => ({
         ...msg,
-        user_nickname: msg.user?.user_metadata?.nickname ||
-                      msg.user?.user_metadata?.ai_name ||
-                      msg.user?.user_metadata?.name ||
-                      msg.user?.email?.split('@')[0] ||
-                      'Anonymous'
+        user_nickname: msg.user_id === user?.id
+          ? (user?.user_metadata?.nickname || user?.user_metadata?.ai_name || user?.user_metadata?.name || 'You')
+          : `User ${msg.user_id.slice(0, 8)}`
       }))
 
       setMessages(messagesWithNickname)
@@ -131,23 +130,20 @@ export default function ChatRoomPage({ params }: { params: Promise<{ lang: Local
           filter: `room_id=eq.${roomId}`,
         },
         async (payload) => {
-          // 新しいメッセージのユーザー情報を取得
-          const { data: userData } = await supabase
-            .from('auth.users')
-            .select('id, email, user_metadata')
-            .eq('id', payload.new.user_id)
-            .single()
-
           const newMsg = {
             ...payload.new,
-            user_nickname: userData?.user_metadata?.nickname ||
-                          userData?.user_metadata?.ai_name ||
-                          userData?.user_metadata?.name ||
-                          userData?.email?.split('@')[0] ||
-                          'Anonymous'
+            user_nickname: payload.new.user_id === user?.id
+              ? (user?.user_metadata?.nickname || user?.user_metadata?.ai_name || user?.user_metadata?.name || 'You')
+              : `User ${payload.new.user_id.slice(0, 8)}`
           } as ChatMessage
 
-          setMessages((prev) => [...prev, newMsg])
+          setMessages((prev) => {
+            // 重複チェック
+            if (prev.some(msg => msg.id === newMsg.id)) {
+              return prev
+            }
+            return [...prev, newMsg]
+          })
         }
       )
       .subscribe()
@@ -205,23 +201,42 @@ export default function ChatRoomPage({ params }: { params: Promise<{ lang: Local
     e.preventDefault()
     if (!supabase || !user || !newMessage.trim()) return
 
+    const messageText = newMessage.trim()
+    setNewMessage('')
+
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('chat_messages')
         .insert([
           {
             room_id: roomId,
             user_id: user.id,
-            message: newMessage.trim(),
+            message: messageText,
           },
         ])
+        .select()
+        .single()
 
       if (error) throw error
 
-      setNewMessage('')
+      // 送信後すぐにメッセージを追加（リアルタイム購読の遅延対策）
+      if (data) {
+        const newMsg: ChatMessage = {
+          ...data,
+          user_nickname: user?.user_metadata?.nickname || user?.user_metadata?.ai_name || user?.user_metadata?.name || 'You'
+        }
+        setMessages((prev) => {
+          // 重複チェック
+          if (prev.some(msg => msg.id === newMsg.id)) {
+            return prev
+          }
+          return [...prev, newMsg]
+        })
+      }
     } catch (error) {
       console.error('Error sending message:', error)
       alert('Failed to send message')
+      setNewMessage(messageText) // エラー時は入力を復元
     }
   }
 

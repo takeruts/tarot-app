@@ -33,6 +33,7 @@
     "advice": "AI的建议"
   },
   "noHistory": "还没有占卜历史",
+  "noQuestion": "未填写",
   "viewDetails": "查看详情",
   "close": "关闭",
   "cardPosition": "卡牌布局",
@@ -94,6 +95,18 @@
     },
     "backToHome": "返回主页"
   },
+  "connectPage": {
+    "title": "寻找有相似烦恼的伙伴",
+    "subtitle": "与有相似烦恼的用户建立联系",
+    "loading": "正在寻找匹配...",
+    "noMatches": "目前没有匹配结果",
+    "noMatchesDesc": "随着占卜历史的增加，更容易找到有相似烦恼的用户",
+    "matchScore": "匹配度",
+    "commonTopics": "共同话题",
+    "sampleQuestion": "咨询示例",
+    "sendRequest": "发送联系请求",
+    "requestSent": "请求已发送"
+  },
   "chat": {
     "title": "聊天室",
     "rooms": "房间列表",
@@ -117,6 +130,12 @@
     "hoursAgo": "小时前",
     "daysAgo": "天前",
     "typing": "正在输入...",
-    "online": "在线"
+    "online": "在线",
+    "searchPlaceholder": "按房间名称搜索...",
+    "filterByCategory": "按类别筛选",
+    "allCategories": "全部",
+    "roomsFound": "个房间",
+    "noFilteredRooms": "没有符合条件的房间",
+    "tryDifferentFilter": "请尝试其他类别或搜索关键词"
   }
 }

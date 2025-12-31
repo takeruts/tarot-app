@@ -33,6 +33,7 @@
     "advice": "AIからのアドバイス"
   },
   "noHistory": "まだ占い履歴がありません",
+  "noQuestion": "記入なし",
   "viewDetails": "詳細を見る",
   "close": "閉じる",
   "cardPosition": "カードの配置",
@@ -96,7 +97,13 @@
     "hoursAgo": "時間前",
     "daysAgo": "日前",
     "typing": "入力中...",
-    "online": "オンライン"
+    "online": "オンライン",
+    "searchPlaceholder": "ルーム名で検索...",
+    "filterByCategory": "カテゴリーで絞り込み",
+    "allCategories": "すべて",
+    "roomsFound": "件のルームが見つかりました",
+    "noFilteredRooms": "条件に合うルームが見つかりませんでした",
+    "tryDifferentFilter": "別のカテゴリーや検索キーワードをお試しください"
   },
   "profilePage": {
     "title": "プロフィール編集",

@@ -455,19 +455,20 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {history.map((item) => {
                 const itemCategory = categories.find(c => c.value === (item as any).category);
+                const hasCategory = !!(item as any).category;
                 return (
                   <motion.div key={item.id} whileHover={{ scale: 1.08, y: -5 }} onClick={() => setSelectedHistory(item)} className="cursor-pointer p-5 rounded-2xl glass border-2 border-white/10 hover:border-purple-400/50 transition-all duration-300 flex flex-col aspect-[3/4] justify-between relative overflow-hidden group shadow-lg hover:shadow-2xl hover:shadow-purple-500/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="relative z-10">
                       <div className="flex items-center gap-1.5 mb-2">
                         <p className="text-[10px] text-purple-300/60 font-bold">{new Date(item.created_at).toLocaleDateString()}</p>
-                        {itemCategory && (
-                          <span className={`text-[9px] px-2 py-0.5 rounded-full bg-gradient-to-r ${itemCategory.color} text-white font-bold shadow-md`}>
+                        {hasCategory && (
+                          <span className={`text-[9px] px-2 py-0.5 rounded-full bg-gradient-to-r ${itemCategory?.color || 'from-purple-500 to-violet-500'} text-white font-bold shadow-md`}>
                             {(item as any).category}
                           </span>
                         )}
                       </div>
-                      <h4 className="text-xs font-bold text-indigo-50 line-clamp-3 leading-snug">{item.question || dict.noHistory}</h4>
+                      <h4 className="text-xs font-bold text-indigo-50 line-clamp-3 leading-snug">{item.question || dict.noQuestion}</h4>
                     </div>
                     <div className="text-[10px] text-pink-300/60 self-end font-black italic relative z-10 group-hover:text-pink-200 transition-colors">{dict.viewDetails}</div>
                   </motion.div>
@@ -488,14 +489,15 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
                       <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest">{new Date(selectedHistory.created_at).toLocaleString()}</p>
                       {(() => {
                         const selectedCategory = categories.find(c => c.value === (selectedHistory as any).category);
-                        return selectedCategory && (
-                          <span className={`text-xs px-2 py-1 rounded-full bg-gradient-to-r ${selectedCategory.color} text-white font-bold`}>
-                            {selectedCategory.label}
+                        const hasCategory = !!(selectedHistory as any).category;
+                        return hasCategory && (
+                          <span className={`text-xs px-2 py-1 rounded-full bg-gradient-to-r ${selectedCategory?.color || 'from-purple-500 to-violet-500'} text-white font-bold`}>
+                            {selectedCategory?.label || (selectedHistory as any).category}
                           </span>
                         );
                       })()}
                     </div>
-                    <h2 className="text-xl md:text-2xl font-black text-indigo-100">Q: {selectedHistory.question || dict.noHistory}</h2>
+                    <h2 className="text-xl md:text-2xl font-black text-indigo-100">Q: {selectedHistory.question || dict.noQuestion}</h2>
                   </div>
                   <button onClick={() => setSelectedHistory(null)} className="text-indigo-400 hover:text-white p-2 text-2xl flex-shrink-0">✕</button>
                 </div>
