@@ -96,3 +96,38 @@ export interface JsonLdSchema {
     name: string;
   };
 }
+
+/**
+ * チャットルームの型定義
+ */
+export interface ChatRoom {
+  id: string;
+  name: string;
+  category: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  member_count?: number;
+}
+
+/**
+ * チャットメッセージの型定義
+ */
+export interface ChatMessage {
+  id: string;
+  room_id: string;
+  user_id: string;
+  message: string;
+  created_at: string;
+  user_nickname?: string;
+}
+
+/**
+ * チャットルームメンバーの型定義
+ */
+export interface ChatRoomMember {
+  id: string;
+  room_id: string;
+  user_id: string;
+  joined_at: string;
+}

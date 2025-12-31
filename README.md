@@ -26,10 +26,12 @@ AIを活用した本格的なタロット占いアプリです。「当てる」
 - **カテゴリー表示**: 各履歴にカテゴリーバッジを表示
 - **詳細モーダル**: カード配置とリーディング内容を再確認可能
 
-### 👥 ユーザー交流機能（開発中）
-- **マッチング**: 似た悩みを持つユーザーとの出会い
-- **タグベース類似度判定**: 相談内容から自動でマッチング候補を提案
-- **メッセージ機能**: 承認後にユーザー同士でメッセージ交換（実装予定）
+### 💬 チャット機能
+- **チャットルーム**: カテゴリー別にチャットルームを作成・参加
+- **リアルタイムメッセージング**: Supabase Realtimeによる即時メッセージ配信
+- **ルーム管理**: ルーム作成、参加、退室機能
+- **メンバー数表示**: 各ルームの参加人数をリアルタイム表示
+- **プライベート空間**: 似た悩みを持つ人同士で安心して相談
 
 ### 🎨 UI/UX
 - **モダンなデザイン**: Zen Kaku Gothic Newフォント採用
@@ -98,10 +100,20 @@ NEXT_PUBLIC_TWITTER_CLIENT_ID=your_twitter_client_id
 
 ### 4. Supabaseテーブルの作成
 
-Supabase SQL Editorで以下のSQLファイルを実行してください：
+Supabase SQL Editorで以下のマイグレーションファイルを順番に実行してください：
 
-1. `supabase-schema.sql` - connectionsとmessagesテーブル作成
-2. `add-category-column.sql` - tarot_historyテーブルにcategoryカラム追加
+1. **チャット機能のテーブル作成**
+   ```bash
+   # supabase/migrations/20250101000000_create_chat_tables.sql
+   ```
+   - chat_rooms（チャットルーム）
+   - chat_room_members（メンバー管理）
+   - chat_messages（メッセージ）
+   - Row Level Security (RLS) ポリシー
+
+2. **既存のテーブル**（過去に作成済みの場合はスキップ）
+   - `tarot_history` テーブル（履歴管理）
+   - categoryカラム追加
 
 ### 5. 開発サーバーの起動
 
@@ -130,7 +142,10 @@ tarot-app/
 │   │   ├── icon.tsx           # ファビコン (32x32)
 │   │   ├── apple-icon.tsx     # Apple用アイコン (180x180)
 │   │   ├── opengraph-image.tsx # OGP画像 (1200x630)
-│   │   ├── connect/           # ユーザー交流ページ
+│   │   ├── connect/           # チャット機能
+│   │   │   ├── page.tsx       # ルーム一覧
+│   │   │   └── [roomId]/      # チャットルーム
+│   │   │       └── page.tsx   # リアルタイムメッセージング
 │   │   ├── login/             # ログインページ
 │   │   ├── profile/           # プロフィール編集
 │   │   ├── reset-password/    # パスワードリセット

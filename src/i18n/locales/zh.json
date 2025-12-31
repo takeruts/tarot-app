@@ -93,5 +93,30 @@
       "emailButton": "联系客服"
     },
     "backToHome": "返回主页"
+  },
+  "chat": {
+    "title": "聊天室",
+    "rooms": "房间列表",
+    "createRoom": "创建新房间",
+    "roomName": "房间名称",
+    "roomNamePlaceholder": "例如：恋爱咨询房间",
+    "selectCategory": "选择类别",
+    "create": "创建",
+    "cancel": "取消",
+    "join": "加入",
+    "leave": "离开",
+    "members": "人参与",
+    "noRooms": "暂无聊天室",
+    "noRoomsDesc": "创建新房间，与有相同烦恼的人交流",
+    "messagePlaceholder": "输入消息...",
+    "send": "发送",
+    "noMessages": "暂无消息",
+    "noMessagesDesc": "发送第一条消息吧！",
+    "justNow": "刚刚",
+    "minutesAgo": "分钟前",
+    "hoursAgo": "小时前",
+    "daysAgo": "天前",
+    "typing": "正在输入...",
+    "online": "在线"
   }
 }
