@@ -304,9 +304,13 @@ export default function CelticCrossPage({ params }: { params: Promise<{ lang: Lo
           </div>
         </div>
 
-        <div className="relative mt-12 mb-8">
-          <h1 className="text-5xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 text-center tracking-tight animate-gradient glow-text-purple drop-shadow-2xl">
-            {dict.title}
+        <div className="relative mt-12 mb-8 max-w-2xl w-full px-6">
+          <h1 className="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 text-center tracking-tight animate-gradient glow-text-purple drop-shadow-2xl leading-relaxed">
+            {dict.title.split('|').map((part: string, index: number) => (
+              <span key={index} className="block">
+                {part.trim()}
+              </span>
+            ))}
           </h1>
           <div className="absolute -inset-4 bg-gradient-to-r from-purple-600/20 via-pink-600/20 to-indigo-600/20 blur-3xl -z-10 animate-magic rounded-full"></div>
         </div>
