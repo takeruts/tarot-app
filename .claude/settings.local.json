@@ -22,7 +22,9 @@
       "Bash(pip install:*)",
       "Bash(git commit:*)",
       "Bash(tasklist:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(npx create-expo-app@latest photo-ranking-app --template blank-typescript)"
     ]
   }
 }
