@@ -80,7 +80,7 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/${lang}/auth/callback`,
       },
     })
 
