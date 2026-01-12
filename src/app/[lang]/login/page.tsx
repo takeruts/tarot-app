@@ -102,8 +102,12 @@ export default function LoginPage({ params }: { params: Promise<{ lang: Locale }
       <div className="max-w-md w-full glass-strong p-10 rounded-3xl shadow-2xl border border-white/20 glow-purple relative z-10 backdrop-blur-xl">
         <div className="text-center mb-10">
           <Link href={`/${lang}`}>
-            <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 mb-3 tracking-tight cursor-pointer uppercase animate-gradient glow-text-purple">
-              {dict.title}
+            <h1 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 mb-3 tracking-tight cursor-pointer animate-gradient glow-text-purple leading-relaxed">
+              {dict.title.split('|').map((part: string, index: number) => (
+                <span key={index} className="block">
+                  {part.trim()}
+                </span>
+              ))}
             </h1>
           </Link>
           <p className="text-purple-300/80 text-sm font-bold uppercase tracking-wider">
