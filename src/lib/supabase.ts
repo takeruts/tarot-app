@@ -31,7 +31,7 @@ export function getSupabaseClient(): SupabaseClient | null {
     auth: {
       persistSession: true,
       detectSessionInUrl: true,
-      flowType: 'pkce',
+      flowType: 'implicit',
     },
   });
 

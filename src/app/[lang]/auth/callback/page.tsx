@@ -2,35 +2,58 @@
 
 import { useEffect, use, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getSupabaseClient } from '@/src/lib/supabase'
+import { createBrowserClient } from '@supabase/ssr'
 import type { Locale } from '@/src/i18n/config'
 
 export default function AuthCallbackPage({ params }: { params: Promise<{ lang: Locale }> }) {
   const { lang } = use(params)
   const router = useRouter()
-  const supabase = getSupabaseClient()
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const handleCallback = async () => {
-      if (!supabase) {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+      if (!supabaseUrl || !supabaseAnonKey) {
         setError('認証システムが利用できません')
         return
       }
 
-      try {
-        // URLからコードを取得してセッションを交換
-        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href)
+      // implicitフロー用のクライアントを作成
+      const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+          flowType: 'implicit',
+          detectSessionInUrl: true,
+        },
+      })
 
-        if (error) {
-          console.error('Auth callback error:', error)
-          setError(error.message)
+      try {
+        // implicitフローでは、ハッシュフラグメントからセッションを自動検出
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+        if (sessionError) {
+          console.error('Session error:', sessionError)
+          setError(sessionError.message)
           return
         }
 
-        // セッション確立後、ホームページにリダイレクト
-        router.push(`/${lang}`)
-        router.refresh()
+        if (session) {
+          // セッションが確立されたらホームページにリダイレクト
+          router.push(`/${lang}`)
+          router.refresh()
+        } else {
+          // セッションがない場合は少し待ってから再試行
+          setTimeout(async () => {
+            const { data: { session: retrySession } } = await supabase.auth.getSession()
+            if (retrySession) {
+              router.push(`/${lang}`)
+              router.refresh()
+            } else {
+              setError('セッションの取得に失敗しました')
+            }
+          }, 1000)
+        }
       } catch (err) {
         console.error('Callback error:', err)
         setError('認証処理中にエラーが発生しました')
@@ -38,7 +61,7 @@ export default function AuthCallbackPage({ params }: { params: Promise<{ lang: L
     }
 
     handleCallback()
-  }, [supabase, router, lang])
+  }, [router, lang])
 
   if (error) {
     return (
